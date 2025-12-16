@@ -87,18 +87,53 @@
     </scroll-view>
   </view>
 
+  <!-- 购物车详情弹窗 -->
+  <view class="cart-mask" wx:if="{{showCartDetail}}" bindtap="hideCart"></view>
+  <view class="cart-popup" wx:if="{{showCartDetail}}">
+    <view class="cart-header">
+      <text class="cart-title">购物车</text>
+      <view class="cart-clear" bindtap="clearCart">
+        <text>🗑 清空</text>
+      </view>
+    </view>
+    <scroll-view scroll-y class="cart-list">
+      <block wx:for="{{cartList}}" wx:key="id">
+        <view class="cart-item">
+          <view class="cart-item-info">
+            <text class="cart-item-name">{{item.name}}</text>
+            <text class="cart-item-price">¥{{item.price}}</text>
+          </view>
+          <view class="cart-controls">
+            <view class="ctrl-btn minus" catchtap="decreaseCart" data-id="{{item.id}}">-</view>
+            <text class="ctrl-num">{{item.quantity}}</text>
+            <view class="ctrl-btn plus" catchtap="increaseCart" data-id="{{item.id}}">+</view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+
   <!-- 底部购物车 -->
   <view class="cart-bar">
-    <view class="cart-left">
+    <view class="cart-left" bindtap="toggleCart">
       <view class="cart-icon-box">
-        <image class="cart-bag" src=""></image>
+        <image class="cart-bag" src="/images/cart.png"></image> <!-- 请确保有这个图标，或者先留空 -->
+        <view wx:if="{{cartCount > 0}}" class="cart-badge">{{cartCount}}</view>
       </view>
-      <text class="empty-text">未选购餐品</text>
+      <view wx:if="{{cartCount > 0}}" class="price-box">
+        <text class="currency">¥</text>
+        <text class="total-price">{{totalPrice}}</text>
+      </view>
+      <text wx:else class="empty-text">未选购餐品</text>
     </view>
     <view class="coupon-helper">
-      <view class="coupon-text">
+      <!-- 这里本来是优惠助手，可以改成去结算按钮 -->
+      <view class="coupon-text" bindtap="goToPay" wx:if="{{cartCount > 0}}" style="background: #d62f35; color: white; padding: 10rpx 30rpx; border-radius: 40rpx;">
+        <text>去结算</text>
+      </view>
+      <view class="coupon-text" wx:else>
         <text>优惠助手</text>
-        <text class="coupon-count">10 张卡券</text>
+        <text class="coupon-sub">预计省¥0</text>
       </view>
     </view>
   </view>
