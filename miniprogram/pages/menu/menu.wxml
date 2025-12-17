@@ -7,7 +7,7 @@
       </view>
       <view class="search-bar">
         <text class="search-icon">🔍</text>
-        <text class="search-text">搜一搜你想吃的</text>
+        <input class="search-input" placeholder="搜一搜你想吃的" placeholder-style="color:#999;" bindinput="onSearchInput" />
       </view>
       <view class="together-btn">
         <text>拼</text> 一起点
@@ -48,9 +48,9 @@
     <!-- 左侧分类 -->
     <scroll-view scroll-y class="sidebar">
       <block wx:for="{{categories}}" wx:key="id">
-        <view class="category-item {{activeCategory === index ? 'active' : ''}}" 
+        <view class="category-item {{activeCategory === item.id ? 'active' : ''}}" 
               bindtap="switchCategory" 
-              data-index="{{index}}">
+              data-id="{{item.id}}">
           <view wx:if="{{item.icon}}" class="cat-icon">{{item.icon}}</view>
           <text>{{item.name}}</text>
         </view>
@@ -58,33 +58,79 @@
     </scroll-view>
 
     <!-- 右侧列表 -->
-    <scroll-view scroll-y class="content" scroll-into-view="{{toView}}" scroll-with-animation>
-      <block wx:for="{{menuData}}" wx:key="id" wx:for-item="cat">
-        <view class="cat-header" id="category-{{cat.id}}">{{cat.category}}</view>
-        <block wx:for="{{cat.items}}" wx:key="id" wx:for-item="dish">
-          <view class="dish-card">
-            <image class="dish-img" src="{{dish.image}}" mode="aspectFill"></image>
-            <view class="dish-info">
-              <view class="dish-title-row">
-                <text class="dish-name">{{dish.name}}</text>
-              </view>
-              <text class="dish-sub">{{dish.sub}}</text>
-              <view class="price-row">
-                <view class="price-wrap">
-                  <text class="price-strike">¥{{dish.originalPrice}}</text>
-                  <text class="price-real">¥<text class="price-big">{{dish.price}}</text>起</text>
-                </view>
-                <button class="spec-btn" bindtap="showSpec" data-item="{{dish}}">选规格</button>
-              </view>
-              <view wx:if="{{dish.tag}}" class="vip-tag">
-                <text class="crown">👑</text> {{dish.tag}}
-              </view>
-            </view>
-          </view>
+    <scroll-view scroll-y class="content" scroll-with-animation scroll-into-view="{{toView}}">
+      
+      <!-- 搜索模式：显示搜索结果 -->
+      <block wx:if="{{products.length > 0}}">
+        <view class="cat-header">{{currentCategoryName}}</view>
+        <block wx:for="{{products}}" wx:key="id" wx:for-item="dish">
+          <template is="dishCard" data="{{dish}}"/>
         </block>
       </block>
+
+      <!-- 正常模式：显示所有分类 -->
+      <block wx:else>
+        <block wx:for="{{menuData}}" wx:key="id" wx:for-item="category">
+          <!-- 分类锚点 ID -->
+          <view class="cat-header" id="cat-{{category.id}}">{{category.name}}</view>
+          
+          <block wx:for="{{category.products}}" wx:key="id" wx:for-item="dish">
+             <template is="dishCard" data="{{dish}}"/>
+          </block>
+        </block>
+      </block>
+
       <view class="spacer"></view>
     </scroll-view>
+  </view>
+
+  <!-- 定义商品卡片模板 -->
+  <template name="dishCard">
+    <view class="dish-card">
+      <image class="dish-img" src="{{dish.image}}" mode="aspectFill"></image>
+      <view class="dish-info">
+        <view class="dish-title-row">
+          <text class="dish-name">{{dish.name}}</text>
+        </view>
+        <text class="dish-sub">{{dish.description || dish.sub}}</text>
+        <view class="price-row">
+          <view class="price-wrap">
+            <text class="price-real">¥<text class="price-big">{{dish.price}}</text></text>
+          </view>
+          <button class="spec-btn" bindtap="showSpec" data-item="{{dish}}">选规格</button>
+        </view>
+      </view>
+    </view>
+  </template>
+
+  <!-- 规格选择弹窗 -->
+  <view class="spec-mask" wx:if="{{showSpecModal}}" bindtap="closeSpec"></view>
+  <view class="spec-modal" wx:if="{{showSpecModal}}">
+    <view class="spec-header">
+      <text class="spec-title">{{currentProduct.name}}</text>
+      <view class="close-btn" bindtap="closeSpec">×</view>
+    </view>
+    <scroll-view scroll-y class="spec-content">
+      <block wx:for="{{currentProduct.parsedFlavors}}" wx:key="name" wx:for-item="flavor" wx:for-index="fIndex">
+        <view class="flavor-group">
+          <view class="flavor-name">{{flavor.name}}</view>
+          <view class="flavor-opts">
+            <block wx:for="{{flavor.options}}" wx:key="*this" wx:for-item="opt">
+              <view class="flavor-opt {{flavor.selected === opt ? 'active' : ''}}" 
+                    bindtap="selectFlavor" 
+                    data-findex="{{fIndex}}" 
+                    data-opt="{{opt}}">
+                {{opt}}
+              </view>
+            </block>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+    <view class="spec-footer">
+      <view class="spec-price">¥{{currentProduct.price}}</view>
+      <button class="add-cart-btn" bindtap="confirmSpec">加入购物车</button>
+    </view>
   </view>
 
   <!-- 购物车详情弹窗 -->
@@ -97,16 +143,17 @@
       </view>
     </view>
     <scroll-view scroll-y class="cart-list">
-      <block wx:for="{{cartList}}" wx:key="id">
+      <block wx:for="{{cartList}}" wx:key="index">
         <view class="cart-item">
           <view class="cart-item-info">
             <text class="cart-item-name">{{item.name}}</text>
+            <text wx:if="{{item.specString}}" class="cart-item-spec">{{item.specString}}</text>
             <text class="cart-item-price">¥{{item.price}}</text>
           </view>
           <view class="cart-controls">
-            <view class="ctrl-btn minus" catchtap="decreaseCart" data-id="{{item.id}}">-</view>
+            <view class="ctrl-btn minus" catchtap="decreaseCart" data-index="{{index}}">-</view>
             <text class="ctrl-num">{{item.quantity}}</text>
-            <view class="ctrl-btn plus" catchtap="increaseCart" data-id="{{item.id}}">+</view>
+            <view class="ctrl-btn plus" catchtap="increaseCart" data-index="{{index}}">+</view>
           </view>
         </view>
       </block>
@@ -116,8 +163,8 @@
   <!-- 底部购物车 -->
   <view class="cart-bar">
     <view class="cart-left" bindtap="toggleCart">
-      <view class="cart-icon-box">
-        <image class="cart-bag" src="/images/cart.png"></image> <!-- 请确保有这个图标，或者先留空 -->
+      <view class="cart-icon-box" style="display: flex; align-items: center; justify-content: center;">
+        <text style="font-size: 36rpx;">🛒</text>
         <view wx:if="{{cartCount > 0}}" class="cart-badge">{{cartCount}}</view>
       </view>
       <view wx:if="{{cartCount > 0}}" class="price-box">

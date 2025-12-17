@@ -1,3 +1,7 @@
+-- Create and select database
+CREATE DATABASE IF NOT EXISTS kfc_ordering DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE kfc_ordering;
+
 -- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: kfc_ordering

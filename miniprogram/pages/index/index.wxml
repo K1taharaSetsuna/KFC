@@ -1,7 +1,13 @@
 <view class="container">
   <!-- 顶部 Banner 背景 -->
   <view class="banner-area">
-    <image class="banner-img" src="https://img.yzcdn.cn/vant/cat.jpeg" mode="aspectFill"></image> <!-- 占位图 -->
+    <swiper class="banner-swiper" indicator-dots="{{true}}" autoplay="{{true}}" interval="{{3000}}" duration="{{500}}" circular="{{true}}">
+      <block wx:for="{{banners}}" wx:key="id">
+        <swiper-item>
+          <image class="banner-img" src="{{item.image}}" mode="aspectFill"></image>
+        </swiper-item>
+      </block>
+    </swiper>
     <view class="privacy-tag">隐私政策 ></view>
   </view>
 
