@@ -33,6 +33,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/user/**",       // 放行用户登录、查卡包
                         "/order/user/list", // 放行查历史订单
                         "/shoppingCart/**",  // 👈 新增这一行
+                        "/addressBook/**",  // 👈 新增这一行
 
                         "/order/create",  // 如果允许未登录下单也可以放行(看需求)
                         "/order/pay",

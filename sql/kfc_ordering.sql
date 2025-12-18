@@ -16,6 +16,45 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `address_book`
+--
+
+DROP TABLE IF EXISTS `address_book`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `address_book` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `consignee` varchar(50) NOT NULL COMMENT '收货人',
+  `sex` varchar(2) DEFAULT NULL COMMENT '性别',
+  `phone` varchar(11) NOT NULL COMMENT '手机号',
+  `province_code` varchar(12) DEFAULT NULL COMMENT '省级区划编号',
+  `province_name` varchar(32) DEFAULT NULL COMMENT '省级名称',
+  `city_code` varchar(12) DEFAULT NULL COMMENT '市级区划编号',
+  `city_name` varchar(32) DEFAULT NULL COMMENT '市级名称',
+  `district_code` varchar(12) DEFAULT NULL COMMENT '区级区划编号',
+  `district_name` varchar(32) DEFAULT NULL COMMENT '区级名称',
+  `detail` varchar(200) DEFAULT NULL COMMENT '详细地址',
+  `label` varchar(100) DEFAULT NULL COMMENT '标签',
+  `is_default` tinyint(1) NOT NULL DEFAULT '0' COMMENT '默认 0 否 1是',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
+  `is_deleted` int DEFAULT '0' COMMENT '逻辑删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='地址簿';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `address_book`
+--
+
+LOCK TABLES `address_book` WRITE;
+/*!40000 ALTER TABLE `address_book` DISABLE KEYS */;
+INSERT INTO `address_book` VALUES (1,2,'老李','1','13900002222',NULL,NULL,NULL,NULL,NULL,NULL,'广东海洋大学主楼101','公司',1,'2025-12-18 20:28:53','2025-12-18 20:28:53',0);
+/*!40000 ALTER TABLE `address_book` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `admin_user`
 --
 
@@ -334,4 +373,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-18 20:20:18
+-- Dump completed on 2025-12-18 20:31:39
