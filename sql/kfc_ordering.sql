@@ -240,6 +240,36 @@ INSERT INTO `shop` VALUES (1,'广东海洋大学店','麻章区湖光镇海大�
 UNLOCK TABLES;
 
 --
+-- Table structure for table `shopping_cart`
+--
+
+DROP TABLE IF EXISTS `shopping_cart`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `shopping_cart` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL COMMENT '商品名称',
+  `image` varchar(255) DEFAULT NULL COMMENT '图片',
+  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `product_id` bigint DEFAULT NULL COMMENT '商品ID',
+  `number` int DEFAULT '1' COMMENT '数量',
+  `amount` decimal(10,2) NOT NULL COMMENT '单价',
+  `dish_flavor` varchar(100) DEFAULT NULL COMMENT '已选口味 (如: 可乐,微辣)',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='购物车';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `shopping_cart`
+--
+
+LOCK TABLES `shopping_cart` WRITE;
+/*!40000 ALTER TABLE `shopping_cart` DISABLE KEYS */;
+/*!40000 ALTER TABLE `shopping_cart` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `user`
 --
 
@@ -304,4 +334,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-18 20:03:14
+-- Dump completed on 2025-12-18 20:20:18

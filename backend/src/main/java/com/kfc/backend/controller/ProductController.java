@@ -11,9 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Tag(name = "产品管理(后台+小程序)", description = "包含分类查询和规格选择")
+@Tag(name = "产品管理(后台+小程序)", description = "包含分类查询、搜索和规格选择")
 @RestController
 @RequestMapping("/product")
 public class ProductController {
@@ -24,22 +23,32 @@ public class ProductController {
     @Autowired
     private ProductFlavorMapper productFlavorMapper;
 
-    // 1. 查询所有商品 (升级版：支持按 categoryId 过滤)
-    @Operation(summary = "获取菜单(支持按分类查)")
+    // 1. 查询所有商品 (升级版：支持按分类查 + 按名字搜索)
+    @Operation(summary = "获取菜单/搜索商品")
     @GetMapping("/list")
-    public List<Product> getList(@RequestParam(required = false) Long categoryId) {
+    public List<Product> getList(
+            @RequestParam(required = false) Long categoryId, // 选填：分类ID
+            @RequestParam(required = false) String name      // 选填：搜索关键词 (👈 新增)
+    ) {
         // 1. 构造查询条件
         QueryWrapper<Product> queryWrapper = new QueryWrapper<>();
+
+        // 如果传了分类ID，就查这个分类下的
         if (categoryId != null) {
-            queryWrapper.eq("category_id", categoryId); // 只查这个分类下的
+            queryWrapper.eq("category_id", categoryId);
         }
+
+        // 如果传了名字，就进行模糊查询 (like %name%)
+        if (name != null && !name.isEmpty()) {
+            queryWrapper.like("name", name);
+        }
+
         queryWrapper.eq("status", 1); // 只查"起售"状态的
         queryWrapper.orderByAsc("price"); // 按价格排序
 
         List<Product> products = productMapper.selectList(queryWrapper);
 
-        // 2. (进阶) 填充口味数据 (如：["可乐","雪碧"])
-        // 前端点"选规格"时需要用到 flavors 字段
+        // 2. 填充口味数据 (搜索出来的结果也要能选规格)
         for (Product product : products) {
             QueryWrapper<ProductFlavor> flavorWrapper = new QueryWrapper<>();
             flavorWrapper.eq("product_id", product.getId());
@@ -50,7 +59,7 @@ public class ProductController {
         return products;
     }
 
-    // --- 后台管理接口 (保持之前的逻辑，稍微适配新字段) ---
+    // --- 后台管理接口 (保持不变) ---
 
     @Operation(summary = "上架新商品(含规格)")
     @PostMapping("/add")
