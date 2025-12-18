@@ -323,6 +323,7 @@ CREATE TABLE `user` (
   `avatar` varchar(500) DEFAULT NULL COMMENT '头像',
   `is_vip` int DEFAULT '0' COMMENT '身份：0-普通用户，1-大神卡(金卡)用户',
   `balance` decimal(10,2) DEFAULT '0.00' COMMENT '余额',
+  `vip_expire_time` datetime DEFAULT NULL COMMENT '会员过期时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='C端顾客表';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -333,7 +334,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,'普通食客小王',NULL,NULL,0,0.00),(2,NULL,'尊贵金卡老李',NULL,NULL,1,0.00);
+INSERT INTO `user` VALUES (1,NULL,'普通食客小王',NULL,NULL,0,0.00,NULL),(2,NULL,'尊贵金卡老李',NULL,NULL,1,0.00,'2026-01-01 00:00:00');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -373,4 +374,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-18 20:31:39
+-- Dump completed on 2025-12-18 20:38:24
