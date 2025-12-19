@@ -3,9 +3,7 @@ const app = getApp();
 Page({
   data: {
     userInfo: null,
-    orders: [],
     vouchers: [],
-    activeTab: 0,
     vipExpireText: ''
   },
 
@@ -18,53 +16,47 @@ Page({
     if (user) {
       const text = user.vipExpireTime ? user.vipExpireTime.split('T')[0] : '';
       this.setData({ userInfo: user, vipExpireText: text });
-      this.fetchOrders(user.id);
       this.fetchVouchers(user.id);
     } else {
-      this.setData({ userInfo: null, orders: [], vouchers: [], vipExpireText: '' });
+      this.setData({ userInfo: null, vouchers: [], vipExpireText: '' });
     }
   },
 
   login() {
-    wx.showLoading({ title: '登录中...' });
-    app.login(); 
-    
-    // 简单延时等待登录完成
-    setTimeout(() => {
-      wx.hideLoading();
-      this.checkLogin();
-    }, 1500);
+    wx.navigateTo({
+      url: '/pages/login/login'
+    });
   },
 
   logout() {
     app.globalData.user = null;
-    this.setData({ userInfo: null, orders: [], vouchers: [], vipExpireText: '' });
+    this.setData({ userInfo: null, vouchers: [], vipExpireText: '' });
     wx.showToast({ title: '已退出', icon: 'none' });
   },
 
   goToAddress() {
+    if (!this.data.userInfo) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      return;
+    }
     wx.navigateTo({
       url: '/pages/address/address'
+    });
+  },
+
+  goToOrders() {
+    if (!this.data.userInfo) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      return;
+    }
+    wx.navigateTo({
+      url: '/pages/orders/orders'
     });
   },
 
   goToVip() {
     wx.switchTab({
       url: '/pages/vip/vip'
-    });
-  },
-
-  switchTab(e) {
-    this.setData({ activeTab: parseInt(e.currentTarget.dataset.idx) });
-  },
-
-  fetchOrders(userId) {
-    const that = this;
-    wx.request({
-      url: `http://localhost:8080/order/user/list?userId=${userId}`,
-      success(res) {
-        if(res.data) that.setData({ orders: res.data });
-      }
     });
   },
 

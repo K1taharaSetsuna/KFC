@@ -1,0 +1,64 @@
+<view class="container">
+  <!-- 顶部概览 -->
+  <view class="header-card">
+    <view class="shop-status">
+      <text class="shop-name">肯德基 (天府广场店)</text>
+      <view class="status-tag running">营业中</view>
+    </view>
+    <view class="stats-row">
+      <view class="stat-item">
+        <text class="num">{{stats.pending || 0}}</text>
+        <text class="label">待接单</text>
+      </view>
+      <view class="stat-item">
+        <text class="num">{{stats.processing || 0}}</text>
+        <text class="label">制作中</text>
+      </view>
+      <view class="stat-item">
+        <text class="num">{{stats.completed || 0}}</text>
+        <text class="label">今日已完成</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 订单管理 Tabs -->
+  <view class="tabs">
+    <view class="tab {{activeTab==2 ? 'active' : ''}}" bindtap="switchTab" data-status="2">待接单</view>
+    <view class="tab {{activeTab==3 ? 'active' : ''}}" bindtap="switchTab" data-status="3">制作中</view>
+    <view class="tab {{activeTab==4 ? 'active' : ''}}" bindtap="switchTab" data-status="4">已完成</view>
+  </view>
+
+  <!-- 订单列表 -->
+  <scroll-view scroll-y class="order-list" refresher-enabled bindrefresherrefresh="onRefresh" refresher-triggered="{{isRefreshing}}">
+    <view class="empty-tip" wx:if="{{orders.length === 0}}">暂无订单</view>
+    
+    <block wx:for="{{orders}}" wx:key="id">
+      <view class="order-card">
+        <view class="card-header">
+          <text class="order-num">#{{item.id}}</text>
+          <text class="order-time">{{item.orderTimeFormatted}}</text>
+        </view>
+        
+        <!-- 简略展示商品信息，实际项目可能需要查详情 -->
+        <view class="order-content">
+          <view class="user-info">
+             <text>顾客ID: {{item.userId}}</text>
+             <text class="price">¥{{item.amount}}</text>
+          </view>
+          <view class="items-desc" wx:if="{{item.remark}}">备注: {{item.remark}}</view>
+        </view>
+
+        <view class="card-actions">
+          <button class="btn-detail" bindtap="viewDetail" data-id="{{item.id}}">查看详情</button>
+          
+          <button class="btn-primary" wx:if="{{item.status === 2}}" bindtap="updateStatus" data-id="{{item.id}}" data-status="3">立即接单</button>
+          
+          <button class="btn-success" wx:if="{{item.status === 3}}" bindtap="updateStatus" data-id="{{item.id}}" data-status="4">通知取餐</button>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 底部垫高 -->
+    <view style="height: 40rpx;"></view>
+  </scroll-view>
+</view>

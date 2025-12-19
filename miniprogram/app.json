@@ -4,7 +4,12 @@
     "pages/menu/menu",
     "pages/me/me",
     "pages/address/address",
-    "pages/vip/vip"
+    "pages/vip/vip",
+    "pages/orders/orders",
+    "pages/login/login",
+    "pages/login-code/login-code",
+    "pages/login-password/login-password",
+    "pages/manager-dashboard/manager-dashboard"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -1,0 +1,29 @@
+<view class="container">
+  <view class="title">验证码登录</view>
+
+  <view class="input-group">
+    <input class="input-field" type="number" placeholder="请输入手机号" placeholder-class="placeholder" bindinput="onPhoneInput" value="{{phone}}" maxlength="11"/>
+  </view>
+
+  <view class="input-group row">
+    <input class="input-field" type="number" placeholder="验证码" placeholder-class="placeholder" bindinput="onCodeInput" value="{{code}}" maxlength="6"/>
+    <view class="get-code-btn {{canGetCode ? 'active' : ''}}" bindtap="getVerificationCode">{{codeBtnText}}</view>
+  </view>
+
+  <button class="login-btn {{canLogin ? 'active' : ''}}" bindtap="handleLogin">登录会员</button>
+
+  <!-- 协议区域 -->
+  <view class="agreement-area">
+    <view class="agreement-row" bindtap="toggleAgree">
+      <view class="checkbox {{isAgreed ? 'checked' : ''}}">
+        <text wx:if="{{isAgreed}}">✔</text>
+      </view>
+      <view class="agreement-text">
+        未注册手机号登录后自动生成会员账号，且代表您已阅读并同意
+        <text class="link">《用户协议》</text>
+        <text class="link">《隐私政策》</text>
+        <text class="link">《会员协议》</text>
+      </view>
+    </view>
+  </view>
+</view>

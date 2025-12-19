@@ -1,72 +1,107 @@
 <view class="container">
   <!-- 头部用户信息 -->
-  <view class="header">
-    <view class="avatar-box">
-      <!-- 简单的占位头像 -->
-      <view class="avatar-placeholder">👤</view>
-    </view>
-    <view class="user-info" wx:if="{{userInfo}}">
-      <view class="nickname">{{userInfo.nickname}}</view>
-      <view class="vip-tag" wx:if="{{userInfo.isVip===1}}">👑 大神卡会员</view>
-      <view class="vip-tag normal" wx:else>普通用户</view>
-      <view class="vip-expire" wx:if="{{userInfo.vipExpireTime}}">
-        有效期至：{{vipExpireText || userInfo.vipExpireTime}}
+  <view class="header-section">
+    <view class="user-row" bindtap="{{userInfo ? '' : 'login'}}">
+      <view class="avatar-box">
+         <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" wx:if="{{userInfo.avatarUrl}}"></image>
+         <!-- 简单的占位头像 -->
+         <view class="avatar-placeholder" wx:else>👤</view>
+      </view>
+     
+      <view class="user-meta" wx:if="{{userInfo}}">
+        <view class="name-row">
+           <text class="nickname">{{userInfo.nickname}}</text>
+           <view class="vip-badge" wx:if="{{userInfo.isVip===1}}">👑 大神卡</view>
+        </view>
+        <view class="phone">{{userInfo.phone || '185****2909'}}</view>
+      </view>
+      <view class="user-meta" wx:else>
+        <view class="nickname">请设置昵称</view>
+        <view class="phone">点击登录</view>
       </view>
     </view>
-    <view class="user-info" wx:else bindtap="login">
-      <view class="nickname">点击登录</view>
-      <view class="desc">登录享受更多优惠</view>
+    
+    <!-- 顶部VIP条 -->
+    <view class="vip-banner-bar" wx:if="{{!userInfo.isVip}}" bindtap="goToVip">
+      <view class="bar-left">
+        <text class="bar-close">×</text>
+        <text class="bar-text">开通微信会员卡享更多福利</text>
+      </view>
+      <view class="bar-btn">去开通</view>
     </view>
   </view>
 
-  <view class="quick-actions" wx:if="{{userInfo}}">
-    <view class="quick-item" bindtap="goToVip">大神卡</view>
-    <view class="quick-item" bindtap="goToAddress">地址管理</view>
+  <!-- 大神卡卡片 -->
+  <view class="vip-card-container" bindtap="goToVip">
+    <view class="vip-card">
+      <view class="card-header">
+        <view class="card-title-box">
+          <text class="card-title">大神卡</text>
+          <text class="card-subtitle">开通最高省¥40/天</text>
+        </view>
+        <view class="card-btn-round">立即开通 ></view>
+      </view>
+      
+      <view class="benefits-row">
+        <view class="benefit-item">
+          <view class="benefit-icon">🎁</view>
+          <view class="benefit-text">到店四件套</view>
+        </view>
+        <view class="benefit-item">
+          <view class="benefit-icon">🛵</view>
+          <view class="benefit-text">外送四件套</view>
+        </view>
+        <view class="benefit-item">
+          <view class="benefit-icon">☕</view>
+          <view class="benefit-text">咖啡6元起</view>
+        </view>
+        <view class="benefit-item">
+          <view class="benefit-icon">☀️</view>
+          <view class="benefit-text">早餐6折起</view>
+        </view>
+        <!-- 下午茶太长了就省略 -->
+      </view>
+    </view>
   </view>
 
-  <!-- 选项卡 -->
-  <view class="tabs">
-    <view class="tab {{activeTab===0?'active':''}}" bindtap="switchTab" data-idx="0">历史订单</view>
-    <view class="tab {{activeTab===1?'active':''}}" bindtap="switchTab" data-idx="1">我的卡包</view>
+  <!-- 统计数据 -->
+  <view class="stats-card">
+    <view class="stat-item">
+      <view class="stat-num">1990</view>
+      <view class="stat-label"><text class="coin-icon">V</text> 金</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-num">{{vouchers.length || 0}}<text class="stat-unit">张</text></view>
+      <view class="stat-label">卡券</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-num">0<text class="stat-unit">元</text></view>
+      <view class="stat-label">礼品卡</view>
+    </view>
   </view>
 
-  <!-- 内容区域 -->
-  <scroll-view scroll-y class="content-area">
-    
-    <!-- 订单列表 -->
-    <block wx:if="{{activeTab===0}}">
-      <view class="empty-tip" wx:if="{{orders.length===0}}">暂无订单</view>
-      <block wx:for="{{orders}}" wx:key="id">
-        <view class="order-card">
-          <view class="order-header">
-            <text class="time">{{item.orderTime}}</text>
-            <text class="status">{{item.status===1?'已支付':'待支付'}}</text>
-          </view>
-          <view class="order-body">
-            <text>订单号: {{item.number}}</text>
-            <text class="amount">¥{{item.amount}}</text>
-          </view>
-        </view>
-      </block>
-    </block>
-
-    <!-- 卡包列表 -->
-    <block wx:if="{{activeTab===1}}">
-      <view class="empty-tip" wx:if="{{vouchers.length===0}}">暂无优惠券</view>
-      <block wx:for="{{vouchers}}" wx:key="id">
-        <view class="voucher-card">
-          <view class="v-left">
-            <text class="v-price">¥<text class="big">{{item.value}}</text></text>
-          </view>
-          <view class="v-right">
-            <text class="v-title">{{item.title}}</text>
-            <text class="v-desc">全场通用</text>
-          </view>
-        </view>
-      </block>
-    </block>
-
-  </scroll-view>
+  <!-- 常用功能 -->
+  <view class="menu-card">
+    <view class="menu-header">常用功能</view>
+    <view class="menu-grid">
+      <view class="menu-item" bindtap="goToOrders">
+        <view class="menu-icon-img">📄</view>
+        <view class="menu-text">我的订单</view>
+      </view>
+      <view class="menu-item" bindtap="goToAddress">
+        <view class="menu-icon-img">📍</view>
+        <view class="menu-text">送餐地址</view>
+      </view>
+      <view class="menu-item">
+        <view class="menu-icon-img">🧾</view>
+        <view class="menu-text">发票助手</view>
+      </view>
+      <view class="menu-item">
+        <view class="menu-icon-img">🎧</view>
+        <view class="menu-text">在线客服</view>
+      </view>
+    </view>
+  </view>
 
   <!-- 退出登录 -->
   <view class="logout-btn" wx:if="{{userInfo}}" bindtap="logout">退出登录</view>

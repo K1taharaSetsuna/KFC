@@ -1,40 +1,248 @@
-.container { background: #f5f5f5; min-height: 100vh; }
-.header { background: #d62f35; padding: 40rpx 30rpx; display: flex; align-items: center; color: #fff; }
+.container {
+  min-height: 100vh;
+  background: #f7f7f7;
+  padding-bottom: 40rpx;
+}
 
-.avatar-placeholder { 
-  width: 100rpx; height: 100rpx; border-radius: 50%; background: #fff; 
-  color: #333; font-size: 50rpx; display: flex; justify-content: center; align-items: center; 
+/* 头部 */
+.header-section {
+  background: #fff;
+  padding: 30rpx 30rpx 0 30rpx;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.avatar-box {
   margin-right: 20rpx;
 }
 
-.nickname { font-size: 36rpx; font-weight: bold; }
-.vip-tag { font-size: 24rpx; background: #333; color: #dcb372; padding: 4rpx 12rpx; border-radius: 20rpx; display: inline-block; margin-top: 10rpx; }
-.vip-tag.normal { background: rgba(255,255,255,0.2); color: #fff; }
-.desc { font-size: 24rpx; opacity: 0.8; margin-top: 6rpx; }
-.vip-expire { font-size: 24rpx; margin-top: 6rpx; }
+.avatar, .avatar-placeholder {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50rpx;
+}
 
-.tabs { display: flex; background: #fff; padding: 20rpx 0; }
-.tab { flex: 1; text-align: center; font-size: 30rpx; position: relative; }
-.tab.active { color: #d62f35; font-weight: bold; }
-.tab.active::after { content: ''; position: absolute; bottom: -10rpx; left: 50%; transform: translateX(-50%); width: 40rpx; height: 4rpx; background: #d62f35; }
+.user-meta {
+  flex: 1;
+}
 
-.quick-actions { background: #fff; padding: 20rpx 30rpx; display: flex; justify-content: space-between; }
-.quick-item { font-size: 28rpx; color: #333; padding: 10rpx 0; }
+.name-row {
+  display: flex;
+  align-items: center;
+}
 
-.content-area { height: calc(100vh - 400rpx); padding: 20rpx; box-sizing: border-box; }
-.empty-tip { text-align: center; color: #999; margin-top: 100rpx; }
+.nickname {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
 
-.order-card { background: #fff; padding: 20rpx; border-radius: 12rpx; margin-bottom: 20rpx; }
-.order-header { display: flex; justify-content: space-between; font-size: 24rpx; color: #999; margin-bottom: 10rpx; }
-.order-body { display: flex; justify-content: space-between; align-items: center; font-size: 30rpx; }
-.amount { font-weight: bold; color: #333; }
+.vip-badge {
+  font-size: 20rpx;
+  background: #333;
+  color: #dcb372;
+  padding: 2rpx 10rpx;
+  border-radius: 10rpx;
+  margin-left: 10rpx;
+}
 
-.voucher-card { background: #fff; display: flex; margin-bottom: 20rpx; border-radius: 12rpx; overflow: hidden; }
-.v-left { background: #fff5f5; color: #d62f35; width: 160rpx; display: flex; justify-content: center; align-items: center; padding: 20rpx 0; }
-.v-price { font-size: 28rpx; }
-.v-price .big { font-size: 48rpx; font-weight: bold; }
-.v-right { padding: 20rpx; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-.v-title { font-weight: bold; font-size: 30rpx; }
-.v-desc { color: #999; font-size: 24rpx; margin-top: 6rpx; }
+.phone {
+  font-size: 26rpx;
+  color: #999;
+  margin-top: 6rpx;
+}
 
-.logout-btn { margin: 40rpx; background: #fff; color: #333; text-align: center; padding: 20rpx; border-radius: 40rpx; }
+/* VIP Banner Bar */
+.vip-banner-bar {
+  background: #fff5f5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15rpx 20rpx;
+  border-radius: 12rpx 12rpx 0 0;
+}
+
+.bar-left {
+  font-size: 24rpx;
+  color: #333;
+}
+
+.bar-close {
+  color: #999;
+  margin-right: 10rpx;
+}
+
+.bar-btn {
+  background: #d62f35;
+  color: #fff;
+  font-size: 22rpx;
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+}
+
+/* VIP Card Area */
+.vip-card-container {
+  padding: 0 30rpx;
+  margin-top: -10rpx; /* overlap if needed, or just margin */
+  margin-bottom: 20rpx;
+  background: #fff; /* header extend */
+  padding-bottom: 20rpx;
+}
+
+.vip-card {
+  background: linear-gradient(135deg, #faeec7, #f3dcb1);
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 10rpx rgba(220, 179, 114, 0.2);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30rpx;
+}
+
+.card-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #5d401e;
+  display: block;
+}
+
+.card-subtitle {
+  font-size: 24rpx;
+  color: #8c714b;
+  margin-top: 8rpx;
+  display: block;
+}
+
+.card-btn-round {
+  background: #4e3a2a;
+  color: #fcebc8;
+  font-size: 24rpx;
+  padding: 8rpx 24rpx;
+  border-radius: 30rpx;
+}
+
+.benefits-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.benefit-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.benefit-icon {
+  font-size: 40rpx;
+  margin-bottom: 10rpx;
+}
+
+.benefit-text {
+  font-size: 20rpx;
+  color: #5d401e;
+}
+
+/* Stats Card */
+.stats-card {
+  background: #fff;
+  margin: 20rpx 30rpx;
+  border-radius: 16rpx;
+  padding: 40rpx 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-unit {
+  font-size: 24rpx;
+  font-weight: normal;
+  margin-left: 4rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 10rpx;
+}
+
+.coin-icon {
+  background: #d4a04d;
+  color: #fff;
+  border-radius: 50%;
+  width: 24rpx;
+  height: 24rpx;
+  display: inline-block;
+  text-align: center;
+  line-height: 24rpx;
+  font-size: 18rpx;
+  margin-right: 4rpx;
+}
+
+/* Menu Card */
+.menu-card {
+  background: #fff;
+  margin: 20rpx 30rpx;
+  border-radius: 16rpx;
+  padding: 30rpx;
+}
+
+.menu-header {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 30rpx;
+  color: #333;
+}
+
+.menu-grid {
+  display: flex;
+  justify-content: space-between;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+}
+
+.menu-icon-img {
+  font-size: 48rpx;
+  margin-bottom: 16rpx;
+}
+
+.menu-text {
+  font-size: 24rpx;
+  color: #333;
+}
+
+.logout-btn {
+  margin: 40rpx 30rpx;
+  background: #fff;
+  color: #333;
+  text-align: center;
+  padding: 24rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}

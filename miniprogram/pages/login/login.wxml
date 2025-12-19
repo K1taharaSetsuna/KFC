@@ -1,0 +1,31 @@
+<view class="container">
+  <!-- 顶部 Logo -->
+  <view class="logo-area">
+    <view class="kfc-logo">
+       <!-- 这里用文字代替图片，或者后续放入图片 -->
+       <text class="logo-text">KFC</text>
+    </view>
+  </view>
+
+  <!-- 登录按钮区域 -->
+  <view class="action-area">
+    <button class="one-click-btn" bindtap="handleOneClickLogin">一键登录会员</button>
+    <view class="mobile-login-link" bindtap="goToMobileLogin">手机验证码登录会员</view>
+    <view class="password-login-link" bindtap="goToPasswordLogin">账号密码登录</view>
+  </view>
+
+  <!-- 协议区域 -->
+  <view class="agreement-area">
+    <view class="agreement-row" bindtap="toggleAgree">
+      <view class="checkbox {{isAgreed ? 'checked' : ''}}">
+        <text wx:if="{{isAgreed}}">✔</text>
+      </view>
+      <view class="agreement-text">
+        未注册手机号登录后自动生成会员账号，且代表您已阅读并同意
+        <text class="link">《用户协议》</text>
+        <text class="link">《隐私政策》</text>
+        <text class="link">《会员协议》</text>
+      </view>
+    </view>
+  </view>
+</view>

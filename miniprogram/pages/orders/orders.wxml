@@ -1,0 +1,16 @@
+<view class="container">
+  <view class="empty-tip" wx:if="{{orders.length===0}}">暂无订单</view>
+  <block wx:for="{{orders}}" wx:key="id">
+    <view class="order-card">
+      <view class="order-header">
+        <text class="time">{{item.orderTime}}</text>
+        <text class="status">{{item.status===1?'已支付':'待支付'}}</text>
+      </view>
+      <view class="order-body">
+        <text>订单号: {{item.number}}</text>
+        <text class="amount">¥{{item.amount}}</text>
+      </view>
+      <!-- 可以加个再来一单按钮 -->
+    </view>
+  </block>
+</view>

@@ -1,0 +1,101 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx;
+  background: #fff;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.logo-area {
+  margin-top: 100rpx;
+  margin-bottom: 100rpx;
+}
+
+.kfc-logo {
+  width: 160rpx;
+  height: 160rpx;
+  background: #d62f35; /* KFC Red */
+  border-radius: 50%; /* Circle? Or maybe just text */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-text {
+  color: #fff;
+  font-weight: bold;
+  font-size: 40rpx;
+}
+
+.action-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.one-click-btn {
+  width: 100%;
+  background: #d62f35;
+  color: #fff;
+  border-radius: 50rpx;
+  padding: 24rpx 0;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.mobile-login-link {
+  margin-top: 40rpx;
+  color: #666;
+  font-size: 28rpx;
+}
+
+.password-login-link {
+  margin-top: 30rpx;
+  color: #999;
+  font-size: 24rpx;
+  text-decoration: underline;
+}
+
+.agreement-area {
+  margin-top: auto;
+  margin-bottom: 40rpx;
+  width: 100%;
+}
+
+.agreement-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.checkbox {
+  width: 30rpx;
+  height: 30rpx;
+  border: 2rpx solid #ccc;
+  border-radius: 50%;
+  margin-right: 16rpx;
+  margin-top: 4rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20rpx;
+  color: #d62f35;
+}
+
+.checkbox.checked {
+  border-color: #d62f35;
+}
+
+.agreement-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: #999;
+  line-height: 1.4;
+}
+
+.link {
+  color: #d62f35;
+  display: inline;
+}
