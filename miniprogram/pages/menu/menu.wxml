@@ -95,7 +95,16 @@
         <text class="dish-sub">{{dish.description || dish.sub}}</text>
         <view class="price-row">
           <view class="price-wrap">
-            <text class="price-real">¥<text class="price-big">{{dish.price}}</text></text>
+            <block wx:if="{{dish.isVipUser}}">
+               <view class="vip-row">
+                 <text class="vip-tag">大神卡</text>
+                 <text class="price-real" style="color:#dcb372">¥<text class="price-big">{{dish.vipPrice}}</text></text>
+               </view>
+               <text class="price-old">¥{{dish.price}}</text>
+            </block>
+            <block wx:else>
+               <text class="price-real">¥<text class="price-big">{{dish.price}}</text></text>
+            </block>
           </view>
           <button class="spec-btn" bindtap="showSpec" data-item="{{dish}}">选规格</button>
         </view>

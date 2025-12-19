@@ -1,0 +1,66 @@
+<view class="container">
+  <scroll-view scroll-y class="scroll">
+    <view class="top-user">
+      <view class="user-row" wx:if="{{userInfo}}">
+        <view class="avatar">👤</view>
+        <view class="user-text">
+          <view class="name">{{userInfo.nickname}}</view>
+          <view class="sub" wx:if="{{userInfo.vipExpireTime}}">
+            有效期至：{{vipExpireText || userInfo.vipExpireTime}}
+          </view>
+          <view class="sub" wx:else>
+            当前状态：{{userInfo.isVip===1 ? '已开通大神卡' : '普通用户'}}
+          </view>
+        </view>
+      </view>
+      <view class="user-row" wx:else bindtap="goLogin">
+        <view class="avatar">👤</view>
+        <view class="user-text">
+          <view class="name">请登录</view>
+          <view class="sub">登录后开通大神卡</view>
+        </view>
+      </view>
+      <view class="vip-title">大神卡</view>
+    </view>
+
+    <view class="banner-card">
+      <view class="banner-main">
+        <text class="banner-logo">WOW 会员</text>
+        <text class="banner-title">大神卡</text>
+        <text class="banner-year">2025</text>
+      </view>
+    </view>
+
+    <view class="section-title">会员类型</view>
+
+    <view class="card-list">
+      <view class="card-item">
+        <view class="card-header">
+          <text class="card-name">月卡</text>
+          <text class="card-tag">新人特惠</text>
+        </view>
+        <view class="card-body">
+          <view class="card-text">30天大神卡权益</view>
+          <view class="price-row">
+            <text class="price-now">¥19</text>
+          </view>
+        </view>
+        <button class="btn buy" bindtap="onBuy" data-type="1">立即开通</button>
+      </view>
+
+      <view class="card-item">
+        <view class="card-header">
+          <text class="card-name">季卡</text>
+          <text class="card-tag">热门</text>
+        </view>
+        <view class="card-body">
+          <view class="card-text">90天大神卡权益</view>
+          <view class="price-row">
+            <text class="price-now">¥38</text>
+          </view>
+        </view>
+        <button class="btn buy" bindtap="onBuy" data-type="2">立即开通</button>
+      </view>
+    </view>
+  </scroll-view>
+</view>

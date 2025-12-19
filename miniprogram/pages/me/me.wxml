@@ -1,0 +1,73 @@
+<view class="container">
+  <!-- 头部用户信息 -->
+  <view class="header">
+    <view class="avatar-box">
+      <!-- 简单的占位头像 -->
+      <view class="avatar-placeholder">👤</view>
+    </view>
+    <view class="user-info" wx:if="{{userInfo}}">
+      <view class="nickname">{{userInfo.nickname}}</view>
+      <view class="vip-tag" wx:if="{{userInfo.isVip===1}}">👑 大神卡会员</view>
+      <view class="vip-tag normal" wx:else>普通用户</view>
+      <view class="vip-expire" wx:if="{{userInfo.vipExpireTime}}">
+        有效期至：{{vipExpireText || userInfo.vipExpireTime}}
+      </view>
+    </view>
+    <view class="user-info" wx:else bindtap="login">
+      <view class="nickname">点击登录</view>
+      <view class="desc">登录享受更多优惠</view>
+    </view>
+  </view>
+
+  <view class="quick-actions" wx:if="{{userInfo}}">
+    <view class="quick-item" bindtap="goToVip">大神卡</view>
+    <view class="quick-item" bindtap="goToAddress">地址管理</view>
+  </view>
+
+  <!-- 选项卡 -->
+  <view class="tabs">
+    <view class="tab {{activeTab===0?'active':''}}" bindtap="switchTab" data-idx="0">历史订单</view>
+    <view class="tab {{activeTab===1?'active':''}}" bindtap="switchTab" data-idx="1">我的卡包</view>
+  </view>
+
+  <!-- 内容区域 -->
+  <scroll-view scroll-y class="content-area">
+    
+    <!-- 订单列表 -->
+    <block wx:if="{{activeTab===0}}">
+      <view class="empty-tip" wx:if="{{orders.length===0}}">暂无订单</view>
+      <block wx:for="{{orders}}" wx:key="id">
+        <view class="order-card">
+          <view class="order-header">
+            <text class="time">{{item.orderTime}}</text>
+            <text class="status">{{item.status===1?'已支付':'待支付'}}</text>
+          </view>
+          <view class="order-body">
+            <text>订单号: {{item.number}}</text>
+            <text class="amount">¥{{item.amount}}</text>
+          </view>
+        </view>
+      </block>
+    </block>
+
+    <!-- 卡包列表 -->
+    <block wx:if="{{activeTab===1}}">
+      <view class="empty-tip" wx:if="{{vouchers.length===0}}">暂无优惠券</view>
+      <block wx:for="{{vouchers}}" wx:key="id">
+        <view class="voucher-card">
+          <view class="v-left">
+            <text class="v-price">¥<text class="big">{{item.value}}</text></text>
+          </view>
+          <view class="v-right">
+            <text class="v-title">{{item.title}}</text>
+            <text class="v-desc">全场通用</text>
+          </view>
+        </view>
+      </block>
+    </block>
+
+  </scroll-view>
+
+  <!-- 退出登录 -->
+  <view class="logout-btn" wx:if="{{userInfo}}" bindtap="logout">退出登录</view>
+</view>

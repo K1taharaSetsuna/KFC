@@ -16,20 +16,20 @@
     <!-- 用户信息卡 -->
     <view class="user-card">
       <view class="user-row">
-        <view class="user-left">
+        <view class="user-left" bindtap="goToMe">
           <image class="avatar" src="https://img.yzcdn.cn/vant/cat.jpeg"></image>
-          <text class="username">肯德基网友 ></text>
+          <text class="username">个人中心 ></text>
         </view>
         <view class="user-actions">
-          <view class="action-item">
+          <view class="action-item" bindtap="goToMe">
             <text class="icon">🏁</text>
             <text>会员码</text>
           </view>
-          <view class="action-item">
+          <view class="action-item" bindtap="goToMe">
             <text class="icon">👛</text>
             <text>卡包</text>
           </view>
-          <view class="action-item">
+          <view class="action-item" bindtap="goToMe">
             <text class="icon">📋</text>
             <text>订单</text>
           </view>
@@ -40,20 +40,17 @@
       <view class="store-info-row">
         <view class="store-text">
           <view class="store-title">
-            <text class="store-name">爱华广场餐厅</text>
+            <text class="store-name">{{shopInfo.name || '正在加载门店...'}}</text>
             <text class="arrow-down">▼</text>
           </view>
-          <text class="store-address">跃进路36号爱华广场3号商场首层</text>
-          <text class="store-hours">营业时间: 24小时</text>
+          <text class="store-address">{{shopInfo.address || '正在定位...'}}</text>
+          <text class="store-hours">营业时间: {{shopInfo.openHours || '暂无信息'}}</text>
           <view class="store-tags">
-            <text class="tag">宠物餐厅</text>
-            <text class="tag">24小时</text>
-            <text class="tag">洗手间</text>
+            <text class="tag">{{shopInfo.status===1?'营业中':'休息中'}}</text>
           </view>
         </view>
         <view class="store-img-wrap">
-          <image class="store-img" src="https://img.yzcdn.cn/vant/cat.jpeg"></image>
-          <text class="img-count">1/2 ></text>
+          <image class="store-img" src="{{shopInfo.image ? '/images/'+shopInfo.image : 'https://img.yzcdn.cn/vant/cat.jpeg'}}"></image>
         </view>
       </view>
     </view>

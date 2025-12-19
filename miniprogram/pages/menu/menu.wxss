@@ -584,3 +584,23 @@ page {
   border-radius: 30rpx;
   margin: 0;
 }
+
+.vip-row {
+  display: flex;
+  align-items: center;
+}
+.vip-tag {
+  background-color: #333;
+  color: #dcb372;
+  font-size: 20rpx;
+  padding: 2rpx 8rpx;
+  border-radius: 4rpx;
+  margin-right: 10rpx;
+}
+.price-old {
+  font-size: 24rpx;
+  color: #999;
+  text-decoration: line-through;
+  margin-top: 4rpx;
+  display: block;
+}

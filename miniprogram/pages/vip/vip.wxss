@@ -1,0 +1,144 @@
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.scroll {
+  height: 100vh;
+  box-sizing: border-box;
+  padding: 20rpx 20rpx 40rpx;
+}
+
+.top-user {
+  margin-bottom: 20rpx;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.avatar {
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 50%;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16rpx;
+}
+
+.user-text .name {
+  font-size: 30rpx;
+  font-weight: bold;
+}
+
+.user-text .sub {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 6rpx;
+}
+
+.vip-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-top: 10rpx;
+}
+
+.banner-card {
+  margin-top: 10rpx;
+  background: #d62f35;
+  border-radius: 20rpx;
+  padding: 30rpx 30rpx;
+  color: #fff;
+}
+
+.banner-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.banner-logo {
+  font-size: 22rpx;
+  opacity: 0.9;
+  margin-bottom: 10rpx;
+}
+
+.banner-title {
+  font-size: 48rpx;
+  font-weight: bold;
+}
+
+.banner-year {
+  font-size: 30rpx;
+  margin-top: 10rpx;
+}
+
+.section-title {
+  margin-top: 30rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.card-list {
+  margin-top: 10rpx;
+}
+
+.card-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  margin-bottom: 20rpx;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.card-name {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.card-tag {
+  font-size: 22rpx;
+  color: #d62f35;
+  border: 1rpx solid #d62f35;
+  border-radius: 20rpx;
+  padding: 2rpx 10rpx;
+}
+
+.card-body {
+  margin-bottom: 16rpx;
+}
+
+.card-text {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+}
+
+.price-now {
+  font-size: 36rpx;
+  color: #d62f35;
+}
+
+.btn.buy {
+  width: 100%;
+  background: #d62f35;
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}

@@ -23,6 +23,41 @@ Page({
 
   onLoad() {
     this.initData();
+    // 每次进入页面加载购物车
+    this.fetchCartList();
+  },
+
+  onShow() {
+    this.fetchCartList();
+  },
+
+  // 获取购物车列表
+  fetchCartList() {
+    const user = app.globalData.user;
+    if (!user) return; // 未登录暂不处理
+
+    const that = this;
+    wx.request({
+      url: `http://localhost:8080/shoppingCart/list?userId=${user.id}`,
+      success(res) {
+        if (res.statusCode === 200 && res.data) {
+          // 映射后端数据结构到前端 cartList
+          const list = res.data.map(item => ({
+            cartId: item.id,
+            id: item.productId,
+            name: item.name,
+            price: item.amount, // 注意：后端存的是单价还是总价？通常是单价，Entity定义为BigDecimal。假设是单价。
+            image: item.image,
+            quantity: item.number,
+            specString: item.dishFlavor || '',
+            selectedFlavors: [] // 无法还原，但 specString 够用了
+          }));
+          
+          that.setData({ cartList: list });
+          that.calculateTotal();
+        }
+      }
+    });
   },
 
   initData() {
@@ -52,7 +87,14 @@ Page({
       wx.hideLoading();
       
       // 1. 处理商品数据
-      const allProducts = products.map(item => item);
+      const user = app.globalData.user;
+      const isVip = user && user.isVip === 1;
+
+      const allProducts = products.map(item => ({
+        ...item,
+        isVipUser: isVip,
+        vipPrice: (item.price * 0.6).toFixed(1)
+      }));
       
       // 2. 组装 menuData (分类 -> 商品列表)
       const menuData = categories.map(cat => {
@@ -110,29 +152,35 @@ Page({
     wx.navigateBack();
   },
 
-  // 搜索功能
+  // 搜索功能 (后端搜索 + 防抖)
   onSearchInput(e) {
     const keyword = e.detail.value;
     
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+
     if (!keyword) {
-      // 如果清空搜索，显示全部
       this.setData({
-        products: [], // 清空搜索结果
+        products: [],
         currentCategoryName: this.data.categories.length > 0 ? this.data.categories[0].name : ''
       });
       return;
     }
 
-    // 从 allProducts 中筛选
-    const results = this.data.allProducts.filter(p => 
-      p.name.includes(keyword) || (p.description && p.description.includes(keyword))
-    );
-    
-    this.setData({
-      products: results,
-      currentCategoryName: `搜索结果 ("${keyword}")`,
-      activeCategory: null // 取消左侧分类选中状态
-    });
+    const that = this;
+    this.searchTimer = setTimeout(() => {
+      wx.request({
+        url: `http://localhost:8080/product/list?name=${keyword}`,
+        success(res) {
+          if (res.statusCode === 200) {
+            that.setData({
+              products: res.data,
+              currentCategoryName: `搜索结果 ("${keyword}")`,
+              activeCategory: null
+            });
+          }
+        }
+      });
+    }, 500);
   },
 
   fetchAllProductsAndFilter(keyword) {
@@ -172,6 +220,7 @@ Page({
     if (parsedFlavors.length === 0) {
       this.addToCart({
         ...item,
+        price: item.isVipUser ? item.vipPrice : item.price,
         specString: '',
         selectedFlavors: {}
       });
@@ -182,6 +231,7 @@ Page({
     this.setData({
       currentProduct: {
         ...item,
+        price: item.isVipUser ? item.vipPrice : item.price,
         parsedFlavors
       },
       showSpecModal: true
@@ -223,30 +273,42 @@ Page({
     wx.showToast({ title: '已加入购物车', icon: 'none' });
   },
 
-  // --- 购物车逻辑 ---
+  // --- 购物车逻辑 (后端同步) ---
 
   addToCart(product) {
-    let cart = this.data.cartList;
-    
-    // 查找是否已存在相同商品且规格相同
-    const index = cart.findIndex(c => c.id === product.id && c.specString === product.specString);
-    
-    if (index > -1) {
-      cart[index].quantity += 1;
-    } else {
-      cart.push({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        specString: product.specString, // 规格描述
-        image: product.image || '',
-        selectedFlavors: product.selectedFlavors || [],
-        quantity: 1
-      });
+    const user = app.globalData.user;
+    if (!user) {
+       wx.showToast({ title: '请先登录', icon: 'none' });
+       // 也可以在这里触发自动登录
+       return;
     }
-    
-    this.setData({ cartList: cart });
-    this.calculateTotal();
+
+    const that = this;
+    const cartItem = {
+      userId: user.id,
+      productId: product.id,
+      name: product.name,
+      image: product.image,
+      amount: product.price, // 存入单价
+      dishFlavor: product.specString || ''
+    };
+
+    wx.request({
+      url: 'http://localhost:8080/shoppingCart/add',
+      method: 'POST',
+      data: cartItem,
+      success(res) {
+        if (res.statusCode === 200) {
+          // 加购成功，刷新列表
+          that.fetchCartList();
+        } else {
+          wx.showToast({ title: '加购失败', icon: 'none' });
+        }
+      },
+      fail() {
+        wx.showToast({ title: '网络错误', icon: 'none' });
+      }
+    });
   },
 
   calculateTotal() {
@@ -273,11 +335,16 @@ Page({
   },
 
   clearCart() {
-    this.setData({
-      cartList: [],
-      cartCount: 0,
-      totalPrice: 0,
-      showCartDetail: false
+    const user = app.globalData.user;
+    const that = this;
+    
+    wx.request({
+      url: `http://localhost:8080/shoppingCart/clean?userId=${user.id}`,
+      method: 'DELETE',
+      success() {
+        that.fetchCartList(); // Should return empty list
+        that.setData({ showCartDetail: false });
+      }
     });
   },
 
@@ -293,34 +360,41 @@ Page({
     // 我们必须修改 WXML 让它传递 index
   },
   
-  // 修正后的购物车增减逻辑，使用 index
+  // 修正后的购物车增减逻辑，使用 index (调用后端)
   increaseCartByIndex(e) {
     const index = e.currentTarget.dataset.index;
-    const cart = this.data.cartList;
-    if (cart[index]) {
-      cart[index].quantity += 1;
-      this.setData({ cartList: cart });
-      this.calculateTotal();
-    }
+    const item = this.data.cartList[index];
+    if (!item) return;
+
+    // 复用 addToCart 逻辑
+    this.addToCart({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        specString: item.specString
+    });
   },
 
   decreaseCartByIndex(e) {
     const index = e.currentTarget.dataset.index;
-    let cart = this.data.cartList;
-    
-    if (cart[index]) {
-      if (cart[index].quantity > 1) {
-        cart[index].quantity -= 1;
-      } else {
-        cart.splice(index, 1);
+    const item = this.data.cartList[index];
+    if (!item) return;
+
+    const user = app.globalData.user;
+    const that = this;
+
+    wx.request({
+      url: 'http://localhost:8080/shoppingCart/sub',
+      method: 'POST',
+      data: {
+        userId: user.id,
+        productId: item.id
+      },
+      success() {
+        that.fetchCartList();
       }
-      this.setData({ cartList: cart });
-      this.calculateTotal();
-      
-      if (cart.length === 0) {
-        this.setData({ showCartDetail: false });
-      }
-    }
+    });
   },
   
   // 保持旧的方法名兼容，但在 WXML 中我们需要改成传递 index
@@ -365,16 +439,27 @@ Page({
 
   // 去结算
   goToPay() {
-    if (this.data.cartList.length === 0) return;
-
     const that = this;
+    const user = app.globalData.user;
+    const shop = app.globalData.shop;
+
+    if (!user) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      return;
+    }
+
+    if (this.data.cartList.length === 0) {
+      wx.showToast({ title: '购物车为空', icon: 'none' });
+      return;
+    }
+
     wx.showLoading({ title: '正在提交订单...' });
 
-    // 构造订单数据
-    // 注意：后端目前只接收 customerName 和 totalPrice，更复杂的如商品明细需要后端升级 Order 实体
+    // 构造订单数据（字段名与后端 Orders 实体一致）
     const orderData = {
-      customerName: "微信用户", // 暂时写死，以后可以从用户信息取
-      totalPrice: parseFloat(this.data.totalPrice)
+      userId: user.id,
+      amount: parseFloat(this.data.totalPrice),
+      shopId: shop ? shop.id : 1
     };
 
     wx.request({
@@ -384,16 +469,22 @@ Page({
       success(res) {
         wx.hideLoading();
         if (res.statusCode === 200) {
-          // 下单成功
-          wx.showModal({
-            title: '下单成功',
-            content: res.data || '您的订单已提交，厨房正在制作中！',
-            showCancel: false,
-            success() {
-              // 清空购物车
-              that.clearCart();
-            }
-          });
+          // 下单成功，解析订单ID并支付
+          const responseMsg = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
+          const match = responseMsg.match(/(\d+)/);
+          
+          if (match) {
+            const orderId = match[0];
+            that.payOrder(orderId);
+          } else {
+            // 如果没解析到ID，就只提示成功
+            wx.showModal({
+              title: '下单成功',
+              content: responseMsg,
+              showCancel: false,
+              success() { that.clearCart(); }
+            });
+          }
         } else {
           wx.showToast({ title: '下单失败', icon: 'none' });
         }
@@ -402,6 +493,32 @@ Page({
         wx.hideLoading();
         wx.showToast({ title: '网络错误', icon: 'none' });
         console.error('下单失败', err);
+      }
+    });
+  },
+
+  // 自动支付
+  payOrder(orderId) {
+    const that = this;
+    wx.showLoading({ title: '正在支付...' });
+    
+    wx.request({
+      url: `http://localhost:8080/order/pay?orderId=${orderId}`,
+      method: 'POST',
+      success(res) {
+        wx.hideLoading();
+        wx.showModal({
+          title: '支付成功',
+          content: '您的餐点正在制作中，请耐心等待！',
+          showCancel: false,
+          success() {
+            that.clearCart();
+          }
+        });
+      },
+      fail(err) {
+        wx.hideLoading();
+        wx.showToast({ title: '支付请求失败', icon: 'none' });
       }
     });
   }

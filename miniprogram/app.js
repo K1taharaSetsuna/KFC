@@ -13,6 +13,32 @@ App({
       })
     }
 
-    this.globalData = {}
+    this.globalData = {
+      user: null
+    }
+
+    // 自动登录
+    this.login();
+  },
+
+  login() {
+    const that = this;
+    // 模拟登录 (userId=1)
+    wx.request({
+      url: 'http://localhost:8080/user/login?userId=1',
+      method: 'GET',
+      success(res) {
+        if (res.statusCode === 200 && res.data) {
+          console.log('登录成功:', res.data);
+          that.globalData.user = res.data;
+          
+          // 如果当前在菜单页，可能需要刷新一下数据以显示会员价
+          // 这里简单处理，用户可以在进入菜单页时获取
+        }
+      },
+      fail(err) {
+        console.error('登录失败', err);
+      }
+    });
   }
 })

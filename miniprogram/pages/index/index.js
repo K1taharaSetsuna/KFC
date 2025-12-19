@@ -2,11 +2,33 @@ const app = getApp()
 
 Page({
   data: {
-    banners: []
+    banners: [],
+    shopInfo: null
   },
 
   onLoad() {
     this.fetchBanners();
+    this.fetchShopInfo();
+  },
+
+  fetchShopInfo() {
+    const that = this;
+    wx.request({
+      url: 'http://localhost:8080/shop/status',
+      method: 'GET',
+      success(res) {
+        if (res.statusCode === 200 && res.data) {
+          that.setData({ shopInfo: res.data });
+          // 存入全局，供下单使用
+          if (app.globalData) {
+            app.globalData.shop = res.data;
+          }
+        }
+      },
+      fail(err) {
+        console.error('获取店铺信息失败', err);
+      }
+    });
   },
 
   fetchBanners() {
@@ -26,10 +48,15 @@ Page({
   },
 
   goToMenu() {
-    wx.navigateTo({
+    wx.switchTab({
       url: '/pages/menu/menu'
+    })
+  },
+
+  goToMe() {
+    wx.switchTab({
+      url: '/pages/me/me'
     })
   }
 });
-
 
