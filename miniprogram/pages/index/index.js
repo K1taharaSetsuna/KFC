@@ -4,8 +4,8 @@ Page({
   data: {
     // 👇 1. 这里换成了你的本地图片路径
     banners: [
-      { id: 1, image: '/images/banner1.jpg' },
-      { id: 2, image: '/images/banner2.jpg' }
+      { id: 1, image: 'https://placehold.co/600x300/d62f35/ffffff?text=KFC+Banner+1' },
+      { id: 2, image: 'https://placehold.co/600x300/d62f35/ffffff?text=KFC+Banner+2' }
     ],
     
     // 店铺信息 (保持不变)
