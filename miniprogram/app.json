@@ -14,7 +14,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "WeChat",
+    "navigationBarTitleText": "KFC",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {
@@ -41,6 +41,14 @@
       }
     ]
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "我们需要您的位置来获取附近的肯德基门店"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
   "style": "v2",
   "sitemapLocation": "sitemap.json"
 }

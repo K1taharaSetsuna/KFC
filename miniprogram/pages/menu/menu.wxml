@@ -1,5 +1,4 @@
 <view class="container">
-  <!-- 自定义顶部栏 -->
   <view class="custom-nav" style="padding-top: {{statusBarHeight}}px;">
     <view class="nav-row">
       <view class="back-btn" bindtap="goBack">
@@ -16,20 +15,19 @@
     </view>
   </view>
 
-  <!-- 门店信息 -->
   <view class="store-header">
     <view class="store-row">
       <view class="store-name-wrap">
         <text class="store-icon">🏢</text>
-        <text class="store-name">爱华广场餐厅</text>
+        <text class="store-name">{{shop.name}}</text>
         <text class="arrow-down">▼</text>
       </view>
       <button class="reserve-btn">预约</button>
     </view>
     <view class="store-meta">
       <text class="tag">自取</text>
-      <text class="address">跃进路36号爱华广场...</text>
-      <text class="distance">2.6km</text>
+      <text class="address">{{shop.address}}</text>
+      <text class="distance" wx:if="{{shop.distance}}">{{shop.distance}}</text>
     </view>
     <view class="menu-tabs">
       <text class="tab active">经典菜单</text>
@@ -38,14 +36,11 @@
     </view>
   </view>
 
-  <!-- 绿色提示条 -->
   <view class="tips-bar">
     <text>🍃 珍惜粮食 按需点餐 🍃</text>
   </view>
 
-  <!-- 菜单主体 -->
   <view class="menu-body">
-    <!-- 左侧分类 -->
     <scroll-view scroll-y class="sidebar">
       <block wx:for="{{categories}}" wx:key="id">
         <view class="category-item {{activeCategory === item.id ? 'active' : ''}}" 
@@ -57,10 +52,8 @@
       </block>
     </scroll-view>
 
-    <!-- 右侧列表 -->
     <scroll-view scroll-y class="content" scroll-with-animation scroll-into-view="{{toView}}">
       
-      <!-- 搜索模式：显示搜索结果 -->
       <block wx:if="{{products.length > 0}}">
         <view class="cat-header">{{currentCategoryName}}</view>
         <block wx:for="{{products}}" wx:key="id" wx:for-item="dish">
@@ -68,10 +61,8 @@
         </block>
       </block>
 
-      <!-- 正常模式：显示所有分类 -->
       <block wx:else>
         <block wx:for="{{menuData}}" wx:key="id" wx:for-item="category">
-          <!-- 分类锚点 ID -->
           <view class="cat-header" id="cat-{{category.id}}">{{category.name}}</view>
           
           <block wx:for="{{category.products}}" wx:key="id" wx:for-item="dish">
@@ -84,7 +75,6 @@
     </scroll-view>
   </view>
 
-  <!-- 定义商品卡片模板 -->
   <template name="dishCard">
     <view class="dish-card">
       <image class="dish-img" src="{{dish.image}}" mode="aspectFill"></image>
@@ -112,7 +102,6 @@
     </view>
   </template>
 
-  <!-- 规格选择弹窗 -->
   <view class="spec-mask" wx:if="{{showSpecModal}}" bindtap="closeSpec"></view>
   <view class="spec-modal" wx:if="{{showSpecModal}}">
     <view class="spec-header">
@@ -142,7 +131,6 @@
     </view>
   </view>
 
-  <!-- 购物车详情弹窗 -->
   <view class="cart-mask" wx:if="{{showCartDetail}}" bindtap="hideCart"></view>
   <view class="cart-popup" wx:if="{{showCartDetail}}">
     <view class="cart-header">
@@ -169,7 +157,6 @@
     </scroll-view>
   </view>
 
-  <!-- 底部购物车 -->
   <view class="cart-bar">
     <view class="cart-left" bindtap="toggleCart">
       <view class="cart-icon-box" style="display: flex; align-items: center; justify-content: center;">
@@ -183,7 +170,6 @@
       <text wx:else class="empty-text">未选购餐品</text>
     </view>
     <view class="coupon-helper">
-      <!-- 这里本来是优惠助手，可以改成去结算按钮 -->
       <view class="coupon-text" bindtap="goToPay" wx:if="{{cartCount > 0}}" style="background: #d62f35; color: white; padding: 10rpx 30rpx; border-radius: 40rpx;">
         <text>去结算</text>
       </view>

@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e3c1749c-1150-49b1-be92-1d83b85968c8" name="更改" comment="完成商品列表查询接口" />
+    <list default="true" id="e3c1749c-1150-49b1-be92-1d83b85968c8" name="更改" comment="完成商品列表查询接口">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -94,7 +96,7 @@
       <workItem from="1765930215062" duration="601000" />
       <workItem from="1765934891838" duration="923000" />
       <workItem from="1766057787998" duration="5269000" />
-      <workItem from="1766125415481" duration="3192000" />
+      <workItem from="1766125415481" duration="4398000" />
     </task>
     <task id="LOCAL-00001" summary="项目初始化">
       <option name="closed" value="true" />

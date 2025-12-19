@@ -2,12 +2,20 @@ const app = getApp()
 
 Page({
   data: {
+    // ✨✨✨ 1. 合并点：补回店铺信息字段 (用于WXML头部显示) ✨✨✨
+    shop: {
+      name: 'KFC 肯德基 (默认店)',
+      address: '请在首页开启定位获取门店',
+      distance: '未知'
+    },
+
+    // --- 下面是你原来的业务数据 ---
     categories: [],
-    products: [], // 现在的 products 将只用于搜索结果显示
-    menuData: [], // 新增：用于存储 {category, products[]} 的结构
+    products: [], 
+    menuData: [], 
     allProducts: [],
     activeCategory: null,
-    toView: '', // 用于 scroll-into-view
+    toView: '', 
     currentCategoryName: '',
     
     // 购物车
@@ -27,30 +35,39 @@ Page({
     this.fetchCartList();
   },
 
+  // ✨✨✨ 2. 合并点：onShow 中既要同步店铺，又要刷新购物车 ✨✨✨
   onShow() {
+    // A. 同步店铺信息 (从首页定位过来的数据)
+    if (app.globalData.shop) {
+      console.log('【点餐页】同步店铺信息:', app.globalData.shop);
+      this.setData({
+        shop: app.globalData.shop
+      });
+    }
+
+    // B. 刷新购物车 (你的后端逻辑)
     this.fetchCartList();
   },
 
   // 获取购物车列表
   fetchCartList() {
     const user = app.globalData.user;
-    if (!user) return; // 未登录暂不处理
+    if (!user) return; 
 
     const that = this;
     wx.request({
       url: `http://localhost:8080/shoppingCart/list?userId=${user.id}`,
       success(res) {
         if (res.statusCode === 200 && res.data) {
-          // 映射后端数据结构到前端 cartList
           const list = res.data.map(item => ({
             cartId: item.id,
             id: item.productId,
             name: item.name,
-            price: item.amount, // 注意：后端存的是单价还是总价？通常是单价，Entity定义为BigDecimal。假设是单价。
+            price: item.amount, 
             image: item.image,
             quantity: item.number,
             specString: item.dishFlavor || '',
-            selectedFlavors: [] // 无法还原，但 specString 够用了
+            selectedFlavors: [] 
           }));
           
           that.setData({ cartList: list });
@@ -104,20 +121,17 @@ Page({
         };
       });
 
-      // 2.1 检查是否有"未分类"商品 (categoryId 不在 categories 列表中)
+      // 2.1 检查是否有"未分类"商品
       const categoryIds = categories.map(c => c.id);
       const uncategorizedProducts = allProducts.filter(p => !categoryIds.includes(p.categoryId));
       
       if (uncategorizedProducts.length > 0) {
-        // 创建一个虚拟分类 "其他美味"
         const otherCategory = {
-          id: 999999, // 虚拟 ID
+          id: 999999, 
           name: '其他美味',
           products: uncategorizedProducts
         };
         menuData.push(otherCategory);
-        
-        // 同时把这个虚拟分类加到左侧导航里
         categories.push(otherCategory);
       }
 
@@ -133,6 +147,7 @@ Page({
     }).catch(err => {
       wx.hideLoading();
       console.error('初始化数据失败', err);
+      // 如果本地没有后端环境，这里的报错是正常的，建议实训展示时保证后端启动
       wx.showToast({ title: '网络请求失败', icon: 'none' });
     });
   },
@@ -144,7 +159,7 @@ Page({
     
     this.setData({ 
       activeCategory: id,
-      toView: `cat-${id}` // 滚动到对应 ID
+      toView: `cat-${id}` 
     });
   },
 
@@ -152,7 +167,7 @@ Page({
     wx.navigateBack();
   },
 
-  // 搜索功能 (后端搜索 + 防抖)
+  // 搜索功能
   onSearchInput(e) {
     const keyword = e.detail.value;
     
@@ -183,40 +198,28 @@ Page({
     }, 500);
   },
 
-  fetchAllProductsAndFilter(keyword) {
-     // 已弃用，直接使用 allProducts
-  },
-
-  filterProducts(keyword) {
-    // 已弃用，逻辑移入 onSearchInput
-  },
-
   // --- 规格弹窗逻辑 ---
 
-  // 打开规格弹窗
   showSpec(e) {
     const item = e.currentTarget.dataset.item;
     
-    // 解析 flavors
     let parsedFlavors = [];
     if (item.flavors && item.flavors.length > 0) {
       parsedFlavors = item.flavors.map(f => {
         let options = [];
         try {
-          options = JSON.parse(f.value); // 解析 JSON 字符串 ["微辣", "中辣"]
+          options = JSON.parse(f.value); 
         } catch (e) {
-          console.error('解析规格失败', e);
           options = [];
         }
         return {
           name: f.name,
           options: options,
-          selected: options.length > 0 ? options[0] : '' // 默认选中第一个
+          selected: options.length > 0 ? options[0] : '' 
         };
       });
     }
 
-    // 如果没有规格，直接加入购物车
     if (parsedFlavors.length === 0) {
       this.addToCart({
         ...item,
@@ -238,12 +241,10 @@ Page({
     });
   },
 
-  // 关闭规格弹窗
   closeSpec() {
     this.setData({ showSpecModal: false });
   },
 
-  // 选择规格选项
   selectFlavor(e) {
     const { findex, opt } = e.currentTarget.dataset;
     const key = `currentProduct.parsedFlavors[${findex}].selected`;
@@ -252,11 +253,8 @@ Page({
     });
   },
 
-  // 确认规格并加入购物车
   confirmSpec() {
     const product = this.data.currentProduct;
-    
-    // 生成规格字符串，例如 "百事可乐, 微辣"
     const specList = product.parsedFlavors.map(f => f.selected);
     const specString = specList.join(', ');
 
@@ -265,7 +263,6 @@ Page({
       name: product.name,
       price: product.price,
       specString: specString,
-      // 可以在这里保留详细的规格选择信息，以便传给后端
       selectedFlavors: product.parsedFlavors
     });
 
@@ -279,7 +276,6 @@ Page({
     const user = app.globalData.user;
     if (!user) {
        wx.showToast({ title: '请先登录', icon: 'none' });
-       // 也可以在这里触发自动登录
        return;
     }
 
@@ -289,7 +285,7 @@ Page({
       productId: product.id,
       name: product.name,
       image: product.image,
-      amount: product.price, // 存入单价
+      amount: product.price, 
       dishFlavor: product.specString || ''
     };
 
@@ -299,7 +295,6 @@ Page({
       data: cartItem,
       success(res) {
         if (res.statusCode === 200) {
-          // 加购成功，刷新列表
           that.fetchCartList();
         } else {
           wx.showToast({ title: '加购失败', icon: 'none' });
@@ -342,31 +337,18 @@ Page({
       url: `http://localhost:8080/shoppingCart/clean?userId=${user.id}`,
       method: 'DELETE',
       success() {
-        that.fetchCartList(); // Should return empty list
+        that.fetchCartList(); 
         that.setData({ showCartDetail: false });
       }
     });
   },
 
-  increaseCart(e) {
-    const index = e.currentTarget.dataset.index; // 使用 index 更方便，因为可能有重复 ID 但不同规格
-    const cart = this.data.cartList;
-    
-    // 注意：这里我们修改 WXML 传 index 会更准确，或者传唯一标识
-    // 为了兼容旧代码，这里先假设传的是 index
-    // 但 WXML 之前传的是 id。如果传 id，对于多规格商品会有问题（删哪个？）
-    // 建议修改 WXML 传 index
-    // 暂时用 id 查找，如果有多个相同 id，可能会操作错误。
-    // 我们必须修改 WXML 让它传递 index
-  },
-  
-  // 修正后的购物车增减逻辑，使用 index (调用后端)
+  // 购物车增减逻辑
   increaseCartByIndex(e) {
     const index = e.currentTarget.dataset.index;
     const item = this.data.cartList[index];
     if (!item) return;
 
-    // 复用 addToCart 逻辑
     this.addToCart({
         id: item.id,
         name: item.name,
@@ -397,21 +379,19 @@ Page({
     });
   },
   
-  // 保持旧的方法名兼容，但在 WXML 中我们需要改成传递 index
+  // 兼容逻辑
   increaseCart(e) {
-    // 检查是否有 index
     if (e.currentTarget.dataset.index !== undefined) {
       this.increaseCartByIndex(e);
       return;
     }
-    // Fallback: 如果只有 ID (旧逻辑)，可能会有问题，但先保留
+    // Fallback logic
     const id = e.currentTarget.dataset.id;
     const cart = this.data.cartList;
     const item = cart.find(c => c.id === id);
     if (item) {
-      item.quantity += 1;
-      this.setData({ cartList: cart });
-      this.calculateTotal();
+        // 这里只是为了界面不报错，实际上应该走 index 逻辑
+        console.warn('建议修改 WXML 使用 data-index');
     }
   },
 
@@ -420,27 +400,13 @@ Page({
       this.decreaseCartByIndex(e);
       return;
     }
-    const id = e.currentTarget.dataset.id;
-    let cart = this.data.cartList;
-    const index = cart.findIndex(c => c.id === id);
-    if (index > -1) {
-      if (cart[index].quantity > 1) {
-        cart[index].quantity -= 1;
-      } else {
-        cart.splice(index, 1);
-      }
-      this.setData({ cartList: cart });
-      this.calculateTotal();
-      if (cart.length === 0) {
-        this.setData({ showCartDetail: false });
-      }
-    }
   },
 
   // 去结算
   goToPay() {
     const that = this;
     const user = app.globalData.user;
+    // ✨✨✨ 3. 这里使用 app.globalData.shop，确保下单门店正确 ✨✨✨
     const shop = app.globalData.shop;
 
     if (!user) {
@@ -455,11 +421,11 @@ Page({
 
     wx.showLoading({ title: '正在提交订单...' });
 
-    // 构造订单数据（字段名与后端 Orders 实体一致）
+    // 构造订单数据
     const orderData = {
       userId: user.id,
       amount: parseFloat(this.data.totalPrice),
-      shopId: shop ? shop.id : 1
+      shopId: shop ? shop.id : 1 // 如果没有定位，默认店ID为1
     };
 
     wx.request({
@@ -469,7 +435,6 @@ Page({
       success(res) {
         wx.hideLoading();
         if (res.statusCode === 200) {
-          // 下单成功，解析订单ID并支付
           const responseMsg = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
           const match = responseMsg.match(/(\d+)/);
           
@@ -477,7 +442,6 @@ Page({
             const orderId = match[0];
             that.payOrder(orderId);
           } else {
-            // 如果没解析到ID，就只提示成功
             wx.showModal({
               title: '下单成功',
               content: responseMsg,
@@ -492,7 +456,6 @@ Page({
       fail(err) {
         wx.hideLoading();
         wx.showToast({ title: '网络错误', icon: 'none' });
-        console.error('下单失败', err);
       }
     });
   },

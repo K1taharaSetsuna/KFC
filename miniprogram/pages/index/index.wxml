@@ -8,10 +8,10 @@
       </block>
     </swiper>
     
-    <view class="location-bar">
+    <view class="location-bar" bindtap="initLocation">
       <text class="loc-icon">📍</text>
       <text class="loc-text">{{shopInfo.address || '开启定位，获取附近餐厅'}}</text>
-      <text class="loc-btn">去开启 ></text>
+      <text class="loc-btn" wx:if="{{!shopInfo.hasLocation}}">去开启 ></text>
     </view>
   </view>
 
@@ -26,9 +26,7 @@
           <view class="user-text">
             <view class="welcome-row">
               <text class="welcome">{{user.displayName}}</text>
-              
               <view wx:if="{{user.isVip == 1}}" style="margin-left:10rpx; background:#333; color:#dcb372; font-size:20rpx; padding:2rpx 8rpx; border-radius:4rpx;">♛ 大神卡</view>
-              
               <view class="qr-box" style="margin-left:auto;"><text class="qr-icon">🏁</text></view>
             </view>
             <view class="assets-row">
