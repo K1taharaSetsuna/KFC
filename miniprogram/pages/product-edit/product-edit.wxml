@@ -1,0 +1,41 @@
+<view class="container">
+  <view class="form-group">
+    
+    <view class="input-item">
+      <text class="label">菜品名称</text>
+      <input class="input" placeholder="请输入菜名 (如: 香辣鸡腿堡)" value="{{formData.name}}" bindinput="onInput" data-field="name" />
+    </view>
+
+    <view class="input-item">
+      <text class="label">所属分类</text>
+      <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categories}}" range-key="name">
+        <view class="picker">
+          {{categoryIndex > -1 ? categories[categoryIndex].name : '请选择分类 >'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="input-item">
+      <text class="label">价格 (¥)</text>
+      <input class="input" type="digit" placeholder="0.00" value="{{formData.price}}" bindinput="onInput" data-field="price" />
+    </view>
+
+    <view class="input-item">
+      <text class="label">图片路径</text>
+      <input class="input" placeholder="输入图片路径 (如: /images/banner1.jpg)" value="{{formData.image}}" bindinput="onInput" data-field="image" />
+    </view>
+    <view class="img-preview" wx:if="{{formData.image}}">
+      <image src="{{formData.image}}" mode="aspectFill"></image>
+    </view>
+
+    <view class="input-item block">
+      <text class="label">菜品描述</text>
+      <textarea class="textarea" placeholder="介绍一下这道菜..." value="{{formData.description}}" bindinput="onInput" data-field="description" auto-height />
+    </view>
+
+  </view>
+
+  <view class="btn-area">
+    <button class="save-btn" bindtap="submitForm">保存提交</button>
+  </view>
+</view>

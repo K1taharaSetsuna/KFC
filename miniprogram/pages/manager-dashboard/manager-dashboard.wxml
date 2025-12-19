@@ -1,10 +1,28 @@
 <view class="container">
-  <!-- 顶部概览 -->
+
+<view class="main-nav">
+  <view class="nav-item {{currentMainTab === 0 ? 'active' : ''}}" bindtap="switchMainTab" data-index="{{0}}">
+    订单管理
+    <view class="indicator" wx:if="{{currentMainTab === 0}}"></view>
+  </view>
+  <view class="nav-item {{currentMainTab === 1 ? 'active' : ''}}" bindtap="switchMainTab" data-index="{{1}}">
+    菜品管理
+    <view class="indicator" wx:if="{{currentMainTab === 1}}"></view>
+  </view>
+</view>
+
+<view class="module-content" wx:if="{{currentMainTab === 0}}">
   <view class="header-card">
     <view class="shop-status">
-      <text class="shop-name">肯德基 (天府广场店)</text>
-      <view class="status-tag running">营业中</view>
+      <view class="shop-info-left">
+        <text class="shop-name">肯德基 (天府广场店)</text>
+        <view class="status-tag running">营业中</view>
+      </view>
+      <view class="switch-btn" bindtap="goToUserSide">
+        去点餐 >
+      </view>
     </view>
+
     <view class="stats-row">
       <view class="stat-item">
         <text class="num">{{stats.pending || 0}}</text>
@@ -21,14 +39,12 @@
     </view>
   </view>
 
-  <!-- 订单管理 Tabs -->
   <view class="tabs">
     <view class="tab {{activeTab==2 ? 'active' : ''}}" bindtap="switchTab" data-status="2">待接单</view>
     <view class="tab {{activeTab==3 ? 'active' : ''}}" bindtap="switchTab" data-status="3">制作中</view>
     <view class="tab {{activeTab==4 ? 'active' : ''}}" bindtap="switchTab" data-status="4">已完成</view>
   </view>
 
-  <!-- 订单列表 -->
   <scroll-view scroll-y class="order-list" refresher-enabled bindrefresherrefresh="onRefresh" refresher-triggered="{{isRefreshing}}">
     <view class="empty-tip" wx:if="{{orders.length === 0}}">暂无订单</view>
     
@@ -39,7 +55,6 @@
           <text class="order-time">{{item.orderTimeFormatted}}</text>
         </view>
         
-        <!-- 简略展示商品信息，实际项目可能需要查详情 -->
         <view class="order-content">
           <view class="user-info">
              <text>顾客ID: {{item.userId}}</text>
@@ -50,15 +65,47 @@
 
         <view class="card-actions">
           <button class="btn-detail" bindtap="viewDetail" data-id="{{item.id}}">查看详情</button>
-          
           <button class="btn-primary" wx:if="{{item.status === 2}}" bindtap="updateStatus" data-id="{{item.id}}" data-status="3">立即接单</button>
-          
           <button class="btn-success" wx:if="{{item.status === 3}}" bindtap="updateStatus" data-id="{{item.id}}" data-status="4">通知取餐</button>
         </view>
       </view>
     </block>
-    
-    <!-- 底部垫高 -->
     <view style="height: 40rpx;"></view>
   </scroll-view>
+</view>
+
+<view class="module-content" wx:if="{{currentMainTab === 1}}">
+  <view class="tool-bar">
+    <view class="tool-title">全店菜品 ({{products.length}})</view>
+    <view class="add-btn-small" bindtap="goToAdd">+ 新建菜品</view>
+  </view>
+
+  <scroll-view scroll-y class="product-list">
+    <block wx:for="{{products}}" wx:key="id">
+      <view class="product-card-manage">
+        <image class="p-img" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="p-info">
+          <view class="p-header">
+            <text class="p-name">{{item.name}}</text>
+            <text class="cat-tag">{{item.categoryName}}</text>
+          </view>
+          <view class="p-price">¥{{item.price}}</view>
+          <view class="p-status">
+             <text class="{{item.status===1?'text-green':'text-red'}}">{{item.status===1?'● 售卖中':'● 已停售'}}</text>
+          </view>
+        </view>
+        
+        <view class="p-actions">
+           <switch checked="{{item.status === 1}}" bindchange="toggleStatus" data-id="{{item.id}}" color="#d62f35" style="transform: scale(0.7);"/>
+           <view class="btn-group">
+              <view class="icon-btn edit" bindtap="goToEdit" data-id="{{item.id}}">✎</view>
+              <view class="icon-btn del" bindtap="handleDelete" data-id="{{item.id}}">🗑</view>
+           </view>
+        </view>
+      </view>
+    </block>
+    <view style="height: 100rpx;"></view>
+  </scroll-view>
+</view>
+
 </view>
