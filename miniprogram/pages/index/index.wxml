@@ -19,18 +19,41 @@
     
     <view class="member-card" bindtap="goToMe">
       <view class="user-info">
-        <image class="avatar" src="https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwBHdRxbS8yb4y7D9iaJqibv8K4FdG0yD8V5aQ/0"></image>
-        <view class="user-text">
-          <view class="welcome-row">
-            <text class="welcome">欢迎您，请登录</text>
-            <view class="qr-box"><text class="qr-icon">🏁</text></view>
+        
+        <block wx:if="{{user}}">
+          <image class="avatar" src="{{user.avatar || 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwBHdRxbS8yb4y7D9iaJqibv8K4FdG0yD8V5aQ/0'}}"></image>
+          
+          <view class="user-text">
+            <view class="welcome-row">
+              <text class="welcome">{{user.displayName}}</text>
+              
+              <view wx:if="{{user.isVip == 1}}" style="margin-left:10rpx; background:#333; color:#dcb372; font-size:20rpx; padding:2rpx 8rpx; border-radius:4rpx;">♛ 大神卡</view>
+              
+              <view class="qr-box" style="margin-left:auto;"><text class="qr-icon">🏁</text></view>
+            </view>
+            <view class="assets-row">
+              <text>🪙 V金 {{user.points || 0}}</text><text class="divider">|</text>
+              <text>🎫 卡券 {{user.coupons || 0}}</text><text class="divider">|</text>
+              <text>💰 余额 {{user.balance || 0}}</text>
+            </view>
           </view>
-          <view class="assets-row">
-            <text>🪙 V金 -</text><text class="divider">|</text>
-            <text>🎫 卡券 -</text><text class="divider">|</text>
-            <text>💰 余额 -</text>
+        </block>
+
+        <block wx:else>
+          <image class="avatar" src="https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwBHdRxbS8yb4y7D9iaJqibv8K4FdG0yD8V5aQ/0"></image>
+          <view class="user-text">
+            <view class="welcome-row">
+              <text class="welcome">欢迎您，请登录</text>
+              <view class="qr-box"><text class="qr-icon">🏁</text></view>
+            </view>
+            <view class="assets-row">
+              <text>🪙 V金 -</text><text class="divider">|</text>
+              <text>🎫 卡券 -</text><text class="divider">|</text>
+              <text>💰 余额 -</text>
+            </view>
           </view>
-        </view>
+        </block>
+
       </view>
     </view>
 
