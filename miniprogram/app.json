@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/manager-dashboard/manager-dashboard",
     "pages/index/index",
     "pages/menu/menu",
     "pages/me/me",
@@ -9,7 +10,7 @@
     "pages/login/login",
     "pages/login-code/login-code",
     "pages/login-password/login-password",
-    "pages/manager-dashboard/manager-dashboard"
+    "pages/product-edit/product-edit"
   ],
   "window": {
     "backgroundTextStyle": "light",

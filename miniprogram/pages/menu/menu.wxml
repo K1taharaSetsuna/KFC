@@ -22,7 +22,7 @@
         <text class="store-name">{{shop.name}}</text>
         <text class="arrow-down">▼</text>
       </view>
-      <button class="reserve-btn">预约</button>
+      <button class="reserve-btn" bindtap="showTempToast">预约</button>
     </view>
     <view class="store-meta">
       <text class="tag">自取</text>
@@ -52,7 +52,13 @@
       </block>
     </scroll-view>
 
-    <scroll-view scroll-y class="content" scroll-with-animation scroll-into-view="{{toView}}">
+    <scroll-view 
+      scroll-y 
+      class="content" 
+      scroll-with-animation 
+      scroll-into-view="{{toView}}"
+      bindscroll="onRightScroll"
+    >
       
       <block wx:if="{{products.length > 0}}">
         <view class="cat-header">{{currentCategoryName}}</view>
@@ -63,11 +69,14 @@
 
       <block wx:else>
         <block wx:for="{{menuData}}" wx:key="id" wx:for-item="category">
-          <view class="cat-header" id="cat-{{category.id}}">{{category.name}}</view>
           
-          <block wx:for="{{category.products}}" wx:key="id" wx:for-item="dish">
-             <template is="dishCard" data="{{dish}}"/>
+          <block wx:if="{{category.products.length > 0}}">
+            <view class="cat-header" id="cat-{{category.id}}">{{category.name}}</view>
+            <block wx:for="{{category.products}}" wx:key="id" wx:for-item="dish">
+               <template is="dishCard" data="{{dish}}"/>
+            </block>
           </block>
+
         </block>
       </block>
 
@@ -114,12 +123,7 @@
           <view class="flavor-name">{{flavor.name}}</view>
           <view class="flavor-opts">
             <block wx:for="{{flavor.options}}" wx:key="*this" wx:for-item="opt">
-              <view class="flavor-opt {{flavor.selected === opt ? 'active' : ''}}" 
-                    bindtap="selectFlavor" 
-                    data-findex="{{fIndex}}" 
-                    data-opt="{{opt}}">
-                {{opt}}
-              </view>
+              <view class="flavor-opt {{flavor.selected === opt ? 'active' : ''}}" bindtap="selectFlavor" data-findex="{{fIndex}}" data-opt="{{opt}}">{{opt}}</view>
             </block>
           </view>
         </view>
@@ -135,9 +139,7 @@
   <view class="cart-popup" wx:if="{{showCartDetail}}">
     <view class="cart-header">
       <text class="cart-title">购物车</text>
-      <view class="cart-clear" bindtap="clearCart">
-        <text>🗑 清空</text>
-      </view>
+      <view class="cart-clear" bindtap="clearCart"><text>🗑 清空</text></view>
     </view>
     <scroll-view scroll-y class="cart-list">
       <block wx:for="{{cartList}}" wx:key="index">

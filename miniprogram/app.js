@@ -1,7 +1,6 @@
 // app.js
 App({
   onLaunch: function () {
-    // 云开发初始化 (保留原样，防止报错)
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力')
     } else {
@@ -10,12 +9,11 @@ App({
       })
     }
 
-    // 👇 核心修改：增加了 baseUrl 和 shop
     this.globalData = {
       userInfo: null,
-      user: null,      // 存后端返回的用户对象 (id, isVip, balance...)
-      shop: null,      // 存店铺信息 (id, name, status...)
-      baseUrl: 'http://localhost:8080' // 👈 统一接口地址，方便后续调用
+      user: null,      
+      shop: null,      
+      baseUrl: 'http://localhost:8080' 
     }
 
     // 自动登录
@@ -25,17 +23,31 @@ App({
   login() {
     const that = this;
     // 模拟登录 (userId=1)
-    // 使用模板字符串拼接 baseUrl
     wx.request({
       url: `${this.globalData.baseUrl}/user/login?userId=1`,
       method: 'GET',
       success(res) {
-        if (res.statusCode === 200 && res.data) {
-          console.log('✅ App自动登录成功:', res.data);
-          that.globalData.user = res.data;
+        // ✨✨✨ 修复点：这里要兼容 R 对象结构 (code=1) ✨✨✨
+        // 你的后端现在返回的是 R<User>，所以数据在 res.data.data 里
+        
+        let userData = null;
+        if (res.data && res.data.code === 1) {
+            userData = res.data.data;
+        } else if (res.data && res.data.id) {
+            // 兼容旧接口直接返回对象的情况
+            userData = res.data;
+        }
+
+        if (userData) {
+          console.log('✅ App自动登录成功:', userData);
+          that.globalData.user = userData;
           
-          // 如果当前用户是 VIP，可以在这里打印一下，方便调试
-          if (res.data.isVip === 1) {
+          // ✨✨✨ 关键修复：把“通行证”存入缓存！✨✨✨
+          // 如果后端没返回专门的 token 字段，通常这个简单的项目里 ID 就是 token
+          const token = userData.token || userData.id; 
+          wx.setStorageSync('token', token); // <--- 这一步之前漏了！
+          
+          if (userData.isVip === 1) {
             console.log('👑 尊贵的大神卡用户');
           }
         }

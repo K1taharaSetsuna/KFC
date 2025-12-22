@@ -1,27 +1,90 @@
+/* 全局容器 */
+page {
+  background: #f5f5f5;
+  height: 100%;
+}
+
 .container {
   height: 100vh;
-  background: #f5f5f5;
   display: flex;
   flex-direction: column;
 }
 
+/* 顶部一级导航 */
+.main-nav {
+  display: flex;
+  background: #fff;
+  border-bottom: 1rpx solid #e0e0e0;
+  box-shadow: 0 2rpx 6rpx rgba(0,0,0,0.02);
+  z-index: 10;
+  flex-shrink: 0; /* 防止被挤压 */
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 30rpx;
+  color: #666;
+  position: relative;
+  font-weight: 500;
+}
+
+.nav-item.active {
+  color: #d62f35;
+  font-weight: bold;
+}
+
+.nav-item .indicator {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 6rpx;
+  background: #d62f35;
+  border-radius: 4rpx;
+}
+
+/* 模块容器 (确保内容区域占满剩余空间) */
+.module-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 关键：隐藏溢出，让内部scroll-view处理 */
+  height: 0; /* 配合flex:1，确保高度受控 */
+}
+
+/* ========================================= */
+/* 2. 订单管理模块 */
+/* ========================================= */
 .header-card {
   background: #d62f35;
   color: #fff;
   padding: 30rpx;
   padding-bottom: 40rpx;
+  flex-shrink: 0;
 }
 
+/* ✨✨✨ 修改：顶部店铺信息栏 ✨✨✨ */
 .shop-status {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-between; /* 左右分布 */
+  align-items: center; /* 垂直居中 */
   margin-bottom: 30rpx;
+}
+
+/* ✨✨✨ 新增：左侧店名和状态容器 ✨✨✨ */
+.shop-info-left {
+  display: flex;
+  flex-direction: column; /* 垂直排列 */
+  align-items: flex-start;
 }
 
 .shop-name {
   font-size: 32rpx;
   font-weight: bold;
+  margin-bottom: 8rpx; /* 给下面状态标签留点空隙 */
 }
 
 .status-tag {
@@ -31,6 +94,17 @@
   border-radius: 8rpx;
 }
 
+/* ✨✨✨ 新增：右侧跳转按钮 ✨✨✨ */
+.switch-btn {
+  font-size: 24rpx;
+  color: #fff;
+  border: 1rpx solid rgba(255,255,255,0.6); /* 半透明边框 */
+  padding: 10rpx 24rpx;
+  border-radius: 30rpx; /* 胶囊形状 */
+  background: rgba(255,255,255,0.15); /* 微透背景 */
+}
+
+/* 数据统计行 */
 .stats-row {
   display: flex;
   justify-content: space-around;
@@ -60,6 +134,7 @@
   height: 88rpx;
   line-height: 88rpx;
   border-bottom: 1rpx solid #eee;
+  flex-shrink: 0;
 }
 
 .tab {
@@ -86,9 +161,10 @@
   background: #d62f35;
 }
 
-/* List */
+/* 订单列表 */
 .order-list {
   flex: 1;
+  height: 0; /* 关键修复 */
   padding: 20rpx;
   box-sizing: border-box;
 }
@@ -105,6 +181,7 @@
   border-radius: 12rpx;
   padding: 30rpx;
   margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
 }
 
 .card-header {
@@ -161,6 +238,7 @@
   padding: 0 30rpx;
   height: 60rpx;
   line-height: 60rpx;
+  border-radius: 30rpx;
 }
 
 .btn-detail {
@@ -176,4 +254,130 @@
 .btn-success {
   background: #07c160;
   color: #fff;
+}
+
+/* ========================================= */
+/* 3. 菜品管理模块 */
+/* ========================================= */
+
+.tool-bar {
+  background: #fff;
+  padding: 20rpx 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1rpx solid #eee;
+  flex-shrink: 0;
+}
+
+.tool-title {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.add-btn-small {
+  background: #d62f35;
+  color: #fff;
+  font-size: 26rpx;
+  padding: 10rpx 30rpx;
+  border-radius: 30rpx;
+  box-shadow: 0 2rpx 6rpx rgba(214, 47, 53, 0.3);
+}
+
+/* 菜品列表容器 */
+.product-list {
+  flex: 1;
+  height: 0; /* 关键修复 */
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+.product-card-manage {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
+}
+
+.p-img {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 10rpx;
+  background: #eee;
+  flex-shrink: 0;
+}
+
+.p-info {
+  flex: 1;
+  margin-left: 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 120rpx;
+}
+
+.p-header {
+  display: flex;
+  align-items: center;
+}
+
+.p-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-right: 12rpx;
+}
+
+.cat-tag {
+  font-size: 20rpx;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2rpx 8rpx;
+  border-radius: 6rpx;
+}
+
+.p-price {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #d62f35;
+}
+
+.p-status {
+  font-size: 22rpx;
+}
+
+.text-green { color: #2e7d32; }
+.text-red { color: #999; }
+
+/* 菜品操作区 */
+.p-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 120rpx;
+  margin-left: 10rpx;
+}
+
+.btn-group {
+  display: flex;
+  gap: 20rpx;
+  margin-top: auto;
+}
+
+.icon-btn {
+  font-size: 36rpx;
+  padding: 10rpx;
+}
+
+.icon-btn.edit {
+  color: #108ee9;
+}
+
+.icon-btn.del {
+  color: #d62f35;
 }

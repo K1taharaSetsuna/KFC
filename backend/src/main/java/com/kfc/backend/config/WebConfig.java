@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        // 允许所有跨域请求 (为了开发方便，生产环境请指定具体域名)
+        // 允许所有跨域请求
         registry.addMapping("/**")
                 .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
@@ -25,17 +25,20 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/auth/login",
-                        "/product/list",
+                        "/user/**",       // 放行用户登录
+
+                        // ✨✨✨ 关键修改：彻底放行产品接口 ✨✨✨
+                        "/product",       // 👈 放行 POST/PUT/DELETE (增删改)
+                        "/product/**",    // 👈 放行 /product/list, /product/{id} (查)
+
                         "/category/**",
                         "/banner/**",
-                        "/shop/**",  // 放行店铺信息接口
-                        // 👇👇👇 新增放行这两行 👇👇👇
-                        "/user/**",       // 放行用户登录、查卡包
-                        "/order/user/list", // 放行查历史订单
-                        "/shoppingCart/**",  // 👈 新增这一行
-                        "/addressBook/**",  // 👈 新增这一行
+                        "/shop/**",
+                        "/order/user/list",
+                        "/shoppingCart/**",
+                        "/addressBook/**",
 
-                        "/order/create",  // 如果允许未登录下单也可以放行(看需求)
+                        "/order/create",
                         "/order/pay",
 
                         // Swagger 相关
