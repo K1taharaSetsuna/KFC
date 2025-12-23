@@ -41,6 +41,9 @@ public class WebConfig implements WebMvcConfigurer {
                         "/order/create",
                         "/order/pay",
 
+                        // AI 助手
+                        "/ai/**",
+
                         // Swagger 相关
                         "/doc.html",
                         "/swagger-ui.html",

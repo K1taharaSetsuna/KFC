@@ -9,8 +9,22 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        
+        String requestURI = request.getRequestURI();
+        // 打印日志方便调试
+        System.out.println("DEBUG: Interceptor processing " + request.getMethod() + " " + requestURI);
 
-        // 1. 从请求头里拿 Token
+        // 1. 放行所有 OPTIONS 预检请求
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+        
+        // 2. 强制放行 AI 接口
+        if (requestURI.contains("/ai/")) {
+            return true;
+        }
+
+        // 3. 从请求头里拿 Token
         String token = request.getHeader("token");
 
 

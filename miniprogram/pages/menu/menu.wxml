@@ -22,7 +22,7 @@
         <text class="store-name">{{shop.name}}</text>
         <text class="arrow-down">▼</text>
       </view>
-      <button class="reserve-btn" bindtap="showTempToast">预约</button>
+      <button class="reserve-btn ai-btn" bindtap="showAIModal">✨ AI推荐</button>
     </view>
     <view class="store-meta">
       <text class="tag">自取</text>
@@ -179,6 +179,56 @@
         <text>优惠助手</text>
         <text class="coupon-sub">预计省¥0</text>
       </view>
+    </view>
+  </view>
+
+  <!-- AI Modal -->
+  <view class="ai-mask" wx:if="{{showAI}}" bindtap="closeAI"></view>
+  <view class="ai-modal" wx:if="{{showAI}}">
+    <view class="ai-header">
+      <text class="ai-title">🤖 AI 点餐助手</text>
+      <view class="close-btn" bindtap="closeAI">×</view>
+    </view>
+    <scroll-view scroll-y class="ai-scroll" scroll-into-view="{{toViewMsg}}">
+      <view class="chat-item assistant">
+        <view class="chat-avatar">🤖</view>
+        <view class="chat-bubble">
+          <text>你好！我是KFC点餐助手。告诉我你想吃什么（例如：我想吃辣的，或者推荐个双人餐），我来为你推荐！</text>
+        </view>
+      </view>
+      
+      <block wx:for="{{chatHistory}}" wx:key="index">
+        <view class="chat-item {{item.role}}" id="msg-{{index}}">
+          <view class="chat-avatar" wx:if="{{item.role === 'assistant'}}">🤖</view>
+          <view class="chat-avatar" wx:if="{{item.role === 'user'}}">👤</view>
+          <view class="chat-bubble">
+            <!-- 思考过程 (仅 AI 回复且有思考内容时显示) -->
+            <view class="ai-thinking" wx:if="{{item.role === 'assistant' && item.reasoning}}" catchtap="toggleThinking" data-index="{{index}}">
+              <view class="ai-thinking-header">
+                <text>🤔 思考过程</text>
+                <text>{{item.showThinking ? '收起' : '展开'}}</text>
+              </view>
+              <view class="ai-thinking-content" wx:if="{{item.showThinking}}">
+                <text user-select>{{item.reasoning}}</text>
+              </view>
+            </view>
+            <!-- 最终回复 -->
+            <text user-select>{{item.content}}</text>
+          </view>
+        </view>
+      </block>
+      
+      <view class="chat-item assistant" wx:if="{{aiLoading}}">
+        <view class="chat-avatar">🤖</view>
+        <view class="chat-bubble">
+           <text>正在思考中...</text>
+        </view>
+      </view>
+    </scroll-view>
+    
+    <view class="ai-footer-input">
+      <input class="ai-input" placeholder="输入你的口味..." value="{{aiQuery}}" bindinput="onAIInput" confirm-type="send" bindconfirm="sendAIRequest"/>
+      <button class="ai-send-btn" bindtap="sendAIRequest" disabled="{{aiLoading}}">发送</button>
     </view>
   </view>
 </view>

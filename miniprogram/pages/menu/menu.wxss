@@ -196,3 +196,92 @@
 .minus { border: 1rpx solid #ddd; color: #666; }
 .plus { background: #d62f35; color: #fff; }
 .ctrl-num { margin: 0 20rpx; font-size: 28rpx; }
+
+/* AI Button */
+.ai-btn {
+  background: #fff;
+  color: #d62f35;
+  border: 1rpx solid #d62f35;
+  font-weight: bold;
+}
+
+/* AI Modal */
+.ai-mask {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); z-index: 300;
+}
+.ai-modal {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #f5f5f5;
+  border-radius: 24rpx 24rpx 0 0;
+  z-index: 301;
+  display: flex; flex-direction: column;
+  height: 85vh; /* Increase height to 85% */
+}
+.ai-header {
+  padding: 30rpx; background: #fff;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1rpx solid #eee;
+  border-radius: 24rpx 24rpx 0 0;
+}
+.ai-title { font-size: 32rpx; font-weight: bold; color: #333; }
+.ai-header .close-btn { font-size: 40rpx; color: #999; padding: 0 20rpx; position: static; }
+
+.ai-scroll { flex: 1; padding: 20rpx; box-sizing: border-box; }
+
+.chat-item { display: flex; margin-bottom: 30rpx; }
+.chat-item.user { flex-direction: row-reverse; }
+.chat-avatar {
+  width: 70rpx; height: 70rpx; background: #fff; border-radius: 50%;
+  display: flex; justify-content: center; align-items: center; font-size: 36rpx;
+  margin: 0 16rpx;
+}
+/* 思考过程折叠样式 */
+.ai-thinking {
+  background: #f0f0f0;
+  padding: 10rpx;
+  border-radius: 8rpx;
+  margin-bottom: 10rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+.ai-thinking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5rpx 0;
+}
+.ai-thinking-content {
+  margin-top: 10rpx;
+  white-space: pre-wrap;
+  border-top: 1rpx solid #e0e0e0;
+  padding-top: 10rpx;
+  max-height: 200rpx;
+  overflow-y: auto;
+}
+
+.chat-bubble {
+  max-width: 60%;
+  padding: 20rpx; border-radius: 16rpx;
+  font-size: 28rpx; line-height: 1.5;
+  word-break: break-all;
+  display: flex; flex-direction: column; /* 支持垂直排列 */
+}
+.chat-item.assistant .chat-bubble { background: #fff; color: #333; }
+.chat-item.user .chat-bubble { background: #d62f35; color: #fff; }
+
+.ai-footer-input {
+  padding: 20rpx; background: #fff;
+  display: flex; align-items: center;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.ai-input {
+  flex: 1; height: 70rpx; background: #f5f5f5; border-radius: 35rpx;
+  padding: 0 30rpx; font-size: 28rpx; margin-right: 20rpx;
+}
+.ai-send-btn {
+  width: 140rpx; height: 70rpx; line-height: 70rpx;
+  background: #d62f35; color: #fff; font-size: 28rpx;
+  border-radius: 35rpx; padding: 0; margin: 0;
+}

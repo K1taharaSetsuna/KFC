@@ -30,7 +30,14 @@ Page({
 
     // 规格弹窗
     showSpecModal: false,
-    currentProduct: null
+    currentProduct: null,
+
+    // AI 助手
+    showAI: false,
+    aiQuery: '',
+    chatHistory: [],
+    aiLoading: false,
+    toViewMsg: ''
   },
 
   onLoad() {
@@ -271,12 +278,133 @@ Page({
     }, 500);
   },
 
+  toggleThinking(e) {
+    const index = e.currentTarget.dataset.index;
+    const history = this.data.chatHistory;
+    if (history[index]) {
+      history[index].showThinking = !history[index].showThinking;
+      this.setData({ chatHistory: history });
+    }
+  },
+
   showTempToast() {
     wx.showToast({
       title: '功能开发中...',
       icon: 'none'
     });
   },
+
+  // --- AI 助手 ---
+  showAIModal() {
+    this.setData({ showAI: true });
+  },
+  closeAI() {
+    this.setData({ showAI: false });
+  },
+  onAIInput(e) {
+    this.setData({ aiQuery: e.detail.value });
+  },
+  toggleThinking(e) {
+    const index = e.currentTarget.dataset.index;
+    const history = this.data.chatHistory;
+    if (history[index]) {
+      history[index].showThinking = !history[index].showThinking;
+      this.setData({ chatHistory: history });
+    }
+  },
+
+  sendAIRequest() {
+    const query = this.data.aiQuery;
+    if (!query || !query.trim()) return;
+
+    // 1. 记录用户提问
+    const history = this.data.chatHistory;
+    history.push({ role: 'user', content: query });
+    
+    this.setData({
+      chatHistory: history,
+      aiQuery: '', // 清空输入框
+      aiLoading: true,
+      toViewMsg: `msg-${history.length - 1}` // 滚动到底部
+    });
+
+    const that = this;
+    // 2. 调用后端 AI 接口
+    wx.request({
+      url: `${app.globalData.baseUrl}/ai/recommend`,
+      method: 'POST',
+      data: { query: query },
+      success(res) {
+        if (res.statusCode !== 200) {
+           history.push({ role: 'assistant', content: `请求失败 (Status: ${res.statusCode})。请确保后端已重启。` });
+           that.setData({
+             chatHistory: history,
+             aiLoading: false,
+             toViewMsg: `msg-${history.length - 1}`
+           });
+           return;
+        }
+
+        let reply = 'AI 似乎开小差了...';
+        let reasoning = '';
+
+        if (res.data && res.data.code === 1) {
+          const rawText = res.data.data;
+          try {
+            // 尝试提取 JSON 部分：寻找第一个 { 和最后一个 }
+            const firstOpen = rawText.indexOf('{');
+            const lastClose = rawText.lastIndexOf('}');
+            
+            if (firstOpen !== -1 && lastClose !== -1 && lastClose > firstOpen) {
+                let jsonStr = rawText.substring(firstOpen, lastClose + 1);
+                const aiObj = JSON.parse(jsonStr);
+                
+                if (aiObj.answer) {
+                    reply = aiObj.answer;
+                    reasoning = aiObj.reasoning || '';
+                } else {
+                    // 如果 JSON 结构不对，当做普通文本
+                    reply = rawText;
+                }
+            } else {
+                // 没找到 JSON 结构
+                reply = rawText;
+            }
+          } catch (e) {
+            console.error("解析 AI JSON 失败", e);
+            reply = rawText;
+          }
+        } else if (res.data && res.data.msg) {
+          reply = `错误: ${res.data.msg}`;
+        } else {
+           // 兜底显示完整响应，方便调试
+           reply = `未知错误: ${JSON.stringify(res.data)}`;
+        }
+
+        history.push({ 
+            role: 'assistant', 
+            content: reply, 
+            reasoning: reasoning, 
+            showThinking: false 
+        });
+        
+        that.setData({
+          chatHistory: history,
+          aiLoading: false,
+          toViewMsg: `msg-${history.length - 1}`
+        });
+      },
+      fail(err) {
+        history.push({ role: 'assistant', content: `网络连接失败: ${err.errMsg}。请检查后端是否启动。` });
+        that.setData({
+          chatHistory: history,
+          aiLoading: false,
+          toViewMsg: `msg-${history.length - 1}`
+        });
+      }
+    });
+  },
+
   goBack() {
     wx.navigateBack();
   },
