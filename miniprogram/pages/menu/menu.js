@@ -325,7 +325,7 @@ Page({
       chatHistory: history,
       aiQuery: '', // 清空输入框
       aiLoading: true,
-      toViewMsg: `msg-${history.length - 1}` // 滚动到底部
+      toViewMsg: 'ai-bottom-anchor' // 滚动到底部锚点
     });
 
     const that = this;
@@ -340,7 +340,7 @@ Page({
            that.setData({
              chatHistory: history,
              aiLoading: false,
-             toViewMsg: `msg-${history.length - 1}`
+             toViewMsg: 'ai-bottom-anchor'
            });
            return;
         }
@@ -391,16 +391,16 @@ Page({
         that.setData({
           chatHistory: history,
           aiLoading: false,
-          toViewMsg: `msg-${history.length - 1}`
+          toViewMsg: 'ai-bottom-anchor'
         });
       },
       fail(err) {
         history.push({ role: 'assistant', content: `网络连接失败: ${err.errMsg}。请检查后端是否启动。` });
         that.setData({
-          chatHistory: history,
-          aiLoading: false,
-          toViewMsg: `msg-${history.length - 1}`
-        });
+                chatHistory: history,
+                aiLoading: false,
+                toViewMsg: 'ai-bottom-anchor'
+              });
       }
     });
   },

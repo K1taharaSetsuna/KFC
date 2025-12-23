@@ -227,7 +227,13 @@
 .ai-title { font-size: 32rpx; font-weight: bold; color: #333; }
 .ai-header .close-btn { font-size: 40rpx; color: #999; padding: 0 20rpx; position: static; }
 
-.ai-scroll { flex: 1; padding: 20rpx; box-sizing: border-box; }
+.ai-scroll { 
+  flex: 1; 
+  height: 0; /* 关键：在 flex 容器中必须设置高度为 0 才能正确滚动 */
+  width: 100%;
+  padding: 20rpx; 
+  box-sizing: border-box;
+}
 
 .chat-item { display: flex; margin-bottom: 30rpx; }
 .chat-item.user { flex-direction: row-reverse; }

@@ -224,6 +224,9 @@
            <text>正在思考中...</text>
         </view>
       </view>
+
+      <!-- 底部垫高，防止最后一条消息贴底或被遮挡 -->
+      <view id="ai-bottom-anchor" style="height: 200rpx; width: 100%;"></view>
     </scroll-view>
     
     <view class="ai-footer-input">
