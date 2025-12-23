@@ -83,10 +83,6 @@
       </view>
     </view>
 
-    <view class="promo-banner">
-      <image class="wide-img" src="https://placehold.co/600x200/d62f35/ffffff?text=Promo+Banner" mode="widthFix"></image>
-    </view>
-    
     <view class="footer-spacer"></view>
   </view>
 </view>

@@ -5,10 +5,10 @@ Page({
     // 1. 用户状态 (默认为 null)
     user: null,
 
-    // 2. 轮播图 (本地图片兜底)
+    // 2. 轮播图 (✨✨✨ 修改：默认使用本地图片兜底，防止接口不通时裂图 ✨✨✨)
     banners: [
-      { id: 1, image: 'https://placehold.co/600x300/d62f35/ffffff?text=KFC+Banner+1' },
-      { id: 2, image: 'https://placehold.co/600x300/d62f35/ffffff?text=KFC+Banner+2' }
+      { id: 1, image: '/images/banner1.jpg' },
+      { id: 2, image: '/images/banner2.jpg' } // 如果你有第二张图的话
     ],
 
     // 3. 店铺信息 (支持定位状态)
@@ -23,38 +23,30 @@ Page({
   },
 
   onLoad() {
+    // 1. 获取轮播图
     this.fetchBanners();
-    // 这里的 fetchShopInfo 获取的是后端店铺状态
+    // 2. 获取后端店铺状态
     this.fetchShopInfo();
-    // ✨✨✨ 页面加载时，尝试自动定位 ✨✨✨
+    // 3. 尝试自动定位
     this.initLocation();
   },
 
-  // ✨✨✨ 核心名字解析逻辑 (完全保留你的版本) ✨✨✨
   onShow() {
     const globalUser = app.globalData.user;
     
     console.log('【首页】全局User对象:', globalUser);
 
     if (globalUser) {
-      // 1. 暴力查找
+      // 1. 暴力查找名字
       let finalName = '肯德基用户';
 
-      if (globalUser.nickName) {
-        finalName = globalUser.nickName;
-      } else if (globalUser.nickname) {
-        finalName = globalUser.nickname;
-      } else if (globalUser.userName) {
-        finalName = globalUser.userName;
-      } else if (globalUser.username) {
-        finalName = globalUser.username;
-      } else if (globalUser.name) {
-        finalName = globalUser.name;
-      } else if (globalUser.realName) {
-        finalName = globalUser.realName;
-      } else if (globalUser.phone) {
-        finalName = globalUser.phone;
-      }
+      if (globalUser.nickName) finalName = globalUser.nickName;
+      else if (globalUser.nickname) finalName = globalUser.nickname;
+      else if (globalUser.userName) finalName = globalUser.userName;
+      else if (globalUser.username) finalName = globalUser.username;
+      else if (globalUser.name) finalName = globalUser.name;
+      else if (globalUser.realName) finalName = globalUser.realName;
+      else if (globalUser.phone) finalName = globalUser.phone;
 
       // 2. 组装数据
       const displayUser = {
@@ -68,7 +60,7 @@ Page({
     }
   },
 
-  // ✨✨✨ 新增：定位权限检查与初始化 ✨✨✨
+  // ✨✨✨ 定位权限检查与初始化 ✨✨✨
   initLocation() {
     const that = this;
     wx.getSetting({
@@ -92,7 +84,7 @@ Page({
     })
   },
 
-  // ✨✨✨ 新增：获取经纬度并更新地址 ✨✨✨
+  // ✨✨✨ 获取经纬度并更新地址 ✨✨✨
   getLocation() {
     const that = this;
     wx.showLoading({ title: '正在寻找附近门店...' });
@@ -119,7 +111,7 @@ Page({
                 shopInfo: newShop
             });
 
-            // ✨✨✨ 3. 关键修改：同步到全局变量，让点餐页也能拿到！✨✨✨
+            // ✨✨✨ 3. 同步到全局变量，让点餐页也能拿到！✨✨✨
             if (app.globalData) {
                 app.globalData.shop = newShop;
                 console.log('【首页】已将店铺同步到全局变量');
@@ -142,7 +134,7 @@ Page({
     })
   },
 
-  // ✨✨✨ 新增：引导打开权限设置 ✨✨✨
+  // ✨✨✨ 引导打开权限设置 ✨✨✨
   showOpenSettingModal() {
     wx.showModal({
       title: '定位服务未开启',
@@ -154,18 +146,34 @@ Page({
     })
   },
 
-  // 获取轮播图
+  // ✨✨✨ 修改版：获取轮播图 (带详细日志和兼容处理) ✨✨✨
   fetchBanners() {
     const that = this;
     if (!app.globalData.baseUrl) return;
     
+    console.log('正在请求轮播图接口...'); 
+
     wx.request({
       url: `${app.globalData.baseUrl}/banner/list`,
       method: 'GET',
       success(res) {
-        if (res.statusCode === 200 && res.data && res.data.length > 0) {
-           that.setData({ banners: res.data });
+        console.log('轮播图接口返回:', res); 
+        
+        // 情况A：后端返回了标准的 R 对象 (code === 1)
+        if (res.statusCode === 200 && res.data && res.data.code === 1) {
+           const list = res.data.data;
+           if (list && list.length > 0) {
+               that.setData({ banners: list });
+           }
+        } 
+        // 情况B：后端直接返回了数组 (兼容旧写法)
+        else if (res.statusCode === 200 && Array.isArray(res.data) && res.data.length > 0) {
+            that.setData({ banners: res.data });
         }
+      },
+      fail(err) {
+        console.error('轮播图请求失败:', err);
+        // 失败了也不怕，因为 data.banners 里已经有 /images/banner1.jpg 兜底了
       }
     });
   },
@@ -180,8 +188,6 @@ Page({
       method: 'GET',
       success(res) {
         if (res.statusCode === 200 && res.data) {
-          // 注意：这里不要直接覆盖整个 shopInfo，以免把定位状态覆盖掉
-          // 我们只更新 name, status, openHours
           const newInfo = res.data;
           
           // 如果还没有定位成功，才使用后端的默认名字
@@ -193,13 +199,11 @@ Page({
              });
           }
           
-          // 更新全局状态 (会被后面的 getLocation 覆盖，这是正常的)
           if (app.globalData) app.globalData.shop = res.data;
         }
       },
       fail() {
-        app.globalData.shop = { id: 1, name: '默认店铺' };
-        // 如果后端挂了，这里只是兜底，不影响定位显示的地址
+        // 如果后端挂了，兜底
         that.setData({
           'shopInfo.name': 'KFC 肯德基 (默认店)'
         });

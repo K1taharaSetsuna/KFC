@@ -1,20 +1,7 @@
 {
   "description": "项目配置文件",
   "packOptions": {
-    "ignore": [
-      {
-        "type": "file",
-        "value": "images/banner1.jpg"
-      },
-      {
-        "type": "file",
-        "value": "images/banner2.jpg"
-      },
-      {
-        "type": "file",
-        "value": "images/banner3.jpg"
-      }
-    ],
+    "ignore": [],
     "include": []
   },
   "setting": {

@@ -1,13 +1,11 @@
 <view class="container">
-  <!-- 头部用户信息 -->
   <view class="header-section">
     <view class="user-row" bindtap="{{userInfo ? '' : 'login'}}">
       <view class="avatar-box">
          <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" wx:if="{{userInfo.avatarUrl}}"></image>
-         <!-- 简单的占位头像 -->
          <view class="avatar-placeholder" wx:else>👤</view>
       </view>
-     
+      
       <view class="user-meta" wx:if="{{userInfo}}">
         <view class="name-row">
            <text class="nickname">{{userInfo.nickname}}</text>
@@ -21,7 +19,6 @@
       </view>
     </view>
     
-    <!-- 顶部VIP条 -->
     <view class="vip-banner-bar" wx:if="{{!userInfo.isVip}}" bindtap="goToVip">
       <view class="bar-left">
         <text class="bar-close">×</text>
@@ -31,7 +28,6 @@
     </view>
   </view>
 
-  <!-- 大神卡卡片 -->
   <view class="vip-card-container" bindtap="goToVip">
     <view class="vip-card">
       <view class="card-header">
@@ -59,12 +55,10 @@
           <view class="benefit-icon">☀️</view>
           <view class="benefit-text">早餐6折起</view>
         </view>
-        <!-- 下午茶太长了就省略 -->
       </view>
     </view>
   </view>
 
-  <!-- 统计数据 -->
   <view class="stats-card">
     <view class="stat-item">
       <view class="stat-num">1990</view>
@@ -80,7 +74,6 @@
     </view>
   </view>
 
-  <!-- 常用功能 -->
   <view class="menu-card">
     <view class="menu-header">常用功能</view>
     <view class="menu-grid">
@@ -103,6 +96,15 @@
     </view>
   </view>
 
-  <!-- 退出登录 -->
+  <view class="list-card">
+    <view class="list-item" bindtap="goToAdminLogin">
+      <view class="list-left">
+        <text class="list-icon">🔧</text>
+        <text class="list-text">商家管理后台</text>
+      </view>
+      <text class="list-arrow">></text>
+    </view>
+  </view>
+
   <view class="logout-btn" wx:if="{{userInfo}}" bindtap="logout">退出登录</view>
 </view>

@@ -246,3 +246,40 @@
   border-radius: 40rpx;
   font-size: 28rpx;
 }
+
+/* ✨✨✨ 新增列表样式 (用于商家管理入口) ✨✨✨ */
+.list-card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx 30rpx; /* 这里的左右 margin 保持和 stats-card 一致 */
+  padding: 0 30rpx;
+}
+
+.list-item {
+  height: 100rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* 如果有多个条目，可以开启下边框 */
+  /* border-bottom: 1rpx solid #f5f5f5; */
+}
+
+.list-left {
+  display: flex;
+  align-items: center;
+}
+
+.list-icon {
+  font-size: 36rpx;
+  margin-right: 20rpx;
+}
+
+.list-text {
+  font-size: 30rpx;
+  color: #333;
+}
+
+.list-arrow {
+  font-size: 28rpx;
+  color: #999;
+}

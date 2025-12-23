@@ -1,0 +1,9 @@
+<view class="container">
+  <view class="login-box">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image> <view class="title">商家后台登录</view>
+    
+    <input class="input" type="password" placeholder="请输入管理员密码" bindinput="onInputPwd" />
+    
+    <button class="login-btn" bindtap="handleLogin">登录</button>
+  </view>
+</view>

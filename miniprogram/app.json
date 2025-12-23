@@ -1,11 +1,13 @@
 {
+  "entryPagePath": "pages/index/index",
   "pages": [
-    "pages/manager-dashboard/manager-dashboard",
     "pages/index/index",
     "pages/menu/menu",
-    "pages/me/me",
-    "pages/address/address",
     "pages/vip/vip",
+    "pages/me/me",
+    "pages/manager-dashboard/manager-dashboard",
+    "pages/admin-login/admin-login",
+    "pages/address/address",
     "pages/orders/orders",
     "pages/login/login",
     "pages/login-code/login-code",

@@ -24,27 +24,30 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns(
+                        // === 基础认证 ===
                         "/auth/login",
-                        "/user/**",       // 放行用户登录
+                        "/user/**",       // 用户登录相关
 
-                        // ✨✨✨ 关键修改：彻底放行产品接口 ✨✨✨
-                        "/product",       // 👈 放行 POST/PUT/DELETE (增删改)
-                        "/product/**",    // 👈 放行 /product/list, /product/{id} (查)
+                        // === 商品与菜单 (店长管理 + 用户点餐) ===
+                        "/product",       // 增删改
+                        "/product/**",    // 查列表、详情
+                        "/category/**",   // 分类
 
-                        "/category/**",
+                        // === ✨✨✨ 订单模块 (关键修复) ✨✨✨ ===
+                        // 之前你只放行了 user/list，导致 admin/list 被拦截
+                        // 现在直接全部放行，解决店长端 401 问题
+                        "/order/**",
+
+                        // === 基础功能 ===
                         "/banner/**",
                         "/shop/**",
-                        "/order/user/list",
                         "/shoppingCart/**",
                         "/addressBook/**",
 
-                        "/order/create",
-                        "/order/pay",
+                        // === 新功能 ===
+                        "/ai/**",         // AI 助手
 
-                        // AI 助手
-                        "/ai/**",
-
-                        // Swagger 相关
+                        // === Swagger 文档 ===
                         "/doc.html",
                         "/swagger-ui.html",
                         "/swagger-ui/**",
