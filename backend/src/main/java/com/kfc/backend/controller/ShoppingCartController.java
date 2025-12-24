@@ -30,21 +30,39 @@ public class ShoppingCartController {
         queryWrapper.eq("user_id", shoppingCart.getUserId());
         queryWrapper.eq("product_id", shoppingCart.getProductId());
 
-        // 如果有口味，口味也必须一致才算同一个商品
-        if(shoppingCart.getDishFlavor() != null){
-            queryWrapper.eq("dish_flavor", shoppingCart.getDishFlavor());
+        // 处理口味逻辑 (null 和 "" 视为相同)
+        String flavor = shoppingCart.getDishFlavor();
+        if (flavor == null || flavor.trim().isEmpty()) {
+            // 匹配数据库中 dish_flavor 为 NULL 或 "" 的记录
+            queryWrapper.and(w -> w.isNull("dish_flavor").or().eq("dish_flavor", ""));
+        } else {
+            // 精确匹配口味
+            queryWrapper.eq("dish_flavor", flavor);
         }
 
-        ShoppingCart cartItem = shoppingCartMapper.selectOne(queryWrapper);
+        // 使用 selectList 以防万一有多条重复数据
+        List<ShoppingCart> cartItems = shoppingCartMapper.selectList(queryWrapper);
 
-        if (cartItem != null) {
-            // 如果已经存在，就在原来基础上 +1
+        if (cartItems != null && !cartItems.isEmpty()) {
+            // 如果已经存在，就在第一条基础上 +1
+            ShoppingCart cartItem = cartItems.get(0);
             cartItem.setNumber(cartItem.getNumber() + 1);
             shoppingCartMapper.updateById(cartItem);
+
+            // 如果有多余的重复数据，删除它们 (清理脏数据)
+            if (cartItems.size() > 1) {
+                for (int i = 1; i < cartItems.size(); i++) {
+                    shoppingCartMapper.deleteById(cartItems.get(i).getId());
+                }
+            }
             return cartItem;
         } else {
             // 如果不存在，就是新加的，数量设为 1
             shoppingCart.setNumber(1);
+            // 规范化口味字段：如果为空字符串或null，统一存为 "" (或者 null，看数据库默认值，这里保持原样即可)
+            if (flavor == null) {
+                shoppingCart.setDishFlavor("");
+            }
             shoppingCartMapper.insert(shoppingCart);
             return shoppingCart;
         }
@@ -71,11 +89,27 @@ public class ShoppingCartController {
     @Operation(summary = "删除/减少一个商品")
     @PostMapping("/sub")
     public String sub(@RequestBody ShoppingCart shoppingCart) {
-        // 查找该商品
-        QueryWrapper<ShoppingCart> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", shoppingCart.getUserId());
-        queryWrapper.eq("product_id", shoppingCart.getProductId());
-        ShoppingCart cartItem = shoppingCartMapper.selectOne(queryWrapper);
+        ShoppingCart cartItem = null;
+
+        // 1. 优先根据 ID 查找 (最准确)
+        if (shoppingCart.getId() != null) {
+            cartItem = shoppingCartMapper.selectById(shoppingCart.getId());
+        } 
+        
+        // 2. 如果没有 ID，则根据 userId + productId + flavor 查找
+        if (cartItem == null) {
+            QueryWrapper<ShoppingCart> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("user_id", shoppingCart.getUserId());
+            queryWrapper.eq("product_id", shoppingCart.getProductId());
+            if (shoppingCart.getDishFlavor() != null) {
+                queryWrapper.eq("dish_flavor", shoppingCart.getDishFlavor());
+            }
+            // 使用 selectList 取第一个，防止多条数据导致报错
+            List<ShoppingCart> list = shoppingCartMapper.selectList(queryWrapper);
+            if (list != null && !list.isEmpty()) {
+                cartItem = list.get(0);
+            }
+        }
 
         if(cartItem != null){
             Integer number = cartItem.getNumber();

@@ -61,14 +61,14 @@
       <view class="action-grid">
         <view class="action-item" bindtap="goToMenu">
           <view class="circle-box">
-            <image class="icon-img-normal" src="/images/icon_waimaidaojia.png" mode="aspectFit"></image>
+            <image class="icon-img-normal" src="{{baseUrl}}/images/icon_waimaidaojia.png" mode="aspectFit"></image>
           </view>
           <text class="action-title">外送到家</text>
         </view>
 
         <view class="action-item center-item" bindtap="goToMenu">
           <view class="circle-box-big">
-            <image class="icon-img-big" src="/images/icon_daodianziqu.png" mode="aspectFit"></image>
+            <image class="icon-img-big" src="{{baseUrl}}/images/icon_daodianziqu.png" mode="aspectFit"></image>
           </view>
           <text class="action-title big-title">到店自取</text>
           <text class="action-sub">提前下单不排队</text>
@@ -76,7 +76,7 @@
 
         <view class="action-item" bindtap="goToMenu">
           <view class="circle-box">
-            <image class="icon-img-normal" src="/images/icon_coffee.png" mode="aspectFit"></image>
+            <image class="icon-img-normal" src="{{baseUrl}}/images/icon_coffee.png" mode="aspectFit"></image>
           </view>
           <text class="action-title">肯悦咖啡</text>
         </view>

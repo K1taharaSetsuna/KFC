@@ -19,10 +19,21 @@ Page({
       openHours: '07:00-23:00',
       hasLocation: false, // ✨ 新增：标记是否已成功定位
       image: '' 
-    }
+    },
+    baseUrl: app.globalData.baseUrl // ✨ 供 WXML 拼接图片地址
   },
 
   onLoad() {
+    // 0. 初始化默认轮播图地址 (防止本地图片被删除后裂图)
+    if (app.globalData.baseUrl) {
+        this.setData({
+            banners: [
+                { id: 1, image: `${app.globalData.baseUrl}/images/banner1.jpg` },
+                { id: 2, image: `${app.globalData.baseUrl}/images/banner2.jpg` }
+            ]
+        });
+    }
+
     // 1. 获取轮播图
     this.fetchBanners();
     // 2. 获取后端店铺状态

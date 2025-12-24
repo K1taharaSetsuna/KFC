@@ -155,6 +155,7 @@ CREATE TABLE `order_detail` (
   `image` varchar(255) DEFAULT NULL COMMENT '商品图',
   `number` int DEFAULT '1' COMMENT '数量',
   `amount` decimal(10,2) DEFAULT '0.00' COMMENT '单价',
+  `dish_flavor` varchar(100) DEFAULT NULL COMMENT '口味',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -229,7 +230,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,'香辣鸡腿堡',19.50,'https://img.kfc.com.cn/burger1.jpg',1,NULL,''),(2,'劲脆鸡腿堡',19.50,'https://img.kfc.com.cn/burger2.jpg',1,NULL,''),(3,'冰镇可乐(中)',7.00,'https://img.kfc.com.cn/cola.jpg',1,NULL,''),(4,'吮指原味鸡',12.00,NULL,1,NULL,''),(5,'已下架的薯条',11.00,NULL,0,NULL,''),(201,'汁汁厚牛堡套餐',39.90,'niubao.jpg',1,101,'牛肉鲜嫩多汁'),(202,'黄金脆皮鸡',12.50,'chicken.jpg',1,102,'外酥里嫩'),(2000741872627191810,'疯狂星期四黄金脆皮鸡',9.90,NULL,1,NULL,''),(2000745882616659970,'至尊VIP汉堡',88.80,NULL,1,NULL,'');
+INSERT INTO `product` VALUES (1,'香辣鸡腿堡',19.50,'https://img.kfc.com.cn/burger1.jpg',1,3,''),(2,'劲脆鸡腿堡',19.50,'https://img.kfc.com.cn/burger2.jpg',1,3,''),(3,'冰镇可乐(中)',7.00,'https://img.kfc.com.cn/cola.jpg',1,5,''),(4,'吮指原味鸡',12.00,NULL,1,4,''),(5,'已下架的薯条',11.00,NULL,0,4,''),(201,'汁汁厚牛堡套餐',39.90,'niubao.jpg',1,2,'牛肉鲜嫩多汁'),(202,'黄金脆皮鸡',12.50,'chicken.jpg',1,4,'外酥里嫩'),(2000741872627191810,'疯狂星期四黄金脆皮鸡',9.90,NULL,1,1,''),(2000745882616659970,'至尊VIP汉堡',88.80,NULL,1,3,'');
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 

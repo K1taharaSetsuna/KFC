@@ -1,15 +1,20 @@
 package com.kfc.backend.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @TableName("shopping_cart")
 public class ShoppingCart {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     private String name;
     private String image;
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long productId;
     private Integer number;
     private BigDecimal amount;

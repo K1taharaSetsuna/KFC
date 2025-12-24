@@ -2,6 +2,8 @@ package com.kfc.backend.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import java.util.List;
  */
 @TableName("product")
 public class Product {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     private String name;
     private BigDecimal price;
@@ -19,6 +22,7 @@ public class Product {
 
     // ✨✨✨ 核心修复：添加映射注解 ✨✨✨
     @TableField("category_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long categoryId; // 所属分类
 
     private String image;    // 图片

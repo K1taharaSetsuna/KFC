@@ -85,9 +85,9 @@
   </view>
 
   <template name="dishCard">
-    <view class="dish-card">
-      <image class="dish-img" src="{{dish.image}}" mode="aspectFill"></image>
-      <view class="dish-info">
+  <view class="dish-card">
+    <image class="dish-img" src="{{dish.image}}" mode="aspectFill" bindtap="goToDetail" data-item="{{dish}}"></image>
+    <view class="dish-info">
         <view class="dish-title-row">
           <text class="dish-name">{{dish.name}}</text>
         </view>
@@ -189,7 +189,7 @@
       <text class="ai-title">🤖 AI 点餐助手</text>
       <view class="close-btn" bindtap="closeAI">×</view>
     </view>
-    <scroll-view scroll-y class="ai-scroll" scroll-into-view="{{toViewMsg}}">
+    <scroll-view scroll-y class="ai-scroll" scroll-into-view="{{toViewMsg}}" enable-flex>
       <view class="chat-item assistant">
         <view class="chat-avatar">🤖</view>
         <view class="chat-bubble">

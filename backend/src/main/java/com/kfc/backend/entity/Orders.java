@@ -14,7 +14,9 @@ public class Orders {
 
     private String number;    // 订单号
     private Integer status;   // 1:待付款 2:待接单 3:已配送 4:已完成 5:已取消
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;      // 下单用户ID
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long addressBookId;
     private LocalDateTime orderTime; // 下单时间
     private LocalDateTime checkoutTime;

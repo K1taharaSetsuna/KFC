@@ -13,6 +13,7 @@
     "pages/login-code/login-code",
     "pages/login-password/login-password",
     "pages/product-edit/product-edit",
+    "pages/product-detail/product-detail",
     "pages/register/register" 
   ],
   "window": {

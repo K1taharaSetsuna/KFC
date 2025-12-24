@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.UUID; // 导入UUID
+
 /**
  * 管理端控制器
  */
@@ -32,8 +34,14 @@ public class AdminController {
         // 1. 调用Service登录
         AdminUser adminUser = adminUserService.login(adminLoginDTO);
 
-        // 2. 登录成功，将员工ID存入 Session (这是一种简单的登录态维持方式)
-        //    如果你后面要用 Token/JWT，这里就换成生成 Token
+        // 2. 登录成功，生成 Token 并存入 SessionMap (为了通过 LoginInterceptor 拦截器)
+        String token = UUID.randomUUID().toString();
+        LoginController.sessionMap.put(token, adminUser.getId()); // 存入管理员ID
+
+        // 3. 将 Token 返回给前端 (前端需要存入 Storage)
+        adminUser.setToken(token);
+
+        // 4. 同时存入 HttpSession (兼容旧逻辑)
         request.getSession().setAttribute("employee", adminUser.getId());
 
         return R.success(adminUser);

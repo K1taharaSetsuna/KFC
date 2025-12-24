@@ -12,9 +12,15 @@ public class AdminUser implements Serializable {
     private String username;
     private String password;
     private String name;     // 管理员姓名
-    // private Integer status; // 如果数据库有 status 字段就加上
+    
+    // 数据库不存在这个字段，仅用于返回 Token
+    @com.baomidou.mybatisplus.annotation.TableField(exist = false)
+    private String token;
 
     // === 手动 Getter / Setter ===
+
+    public String getToken() { return token; }
+    public void setToken(String token) { this.token = token; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

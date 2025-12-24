@@ -176,8 +176,18 @@ Page({
 
       // 3. 处理商品数据
       const allProducts = products.map(item => {
+        let img = item.image || '';
+        if (img && !img.startsWith('http') && !img.startsWith('/images/')) {
+             // 假设数据库存的是文件名，拼接完整路径
+             img = `${app.globalData.baseUrl}/images/${img}`;
+        } else if (img && img.startsWith('/images/')) {
+             // 如果存的是 /images/banner.jpg 这种相对路径，也加上域名
+             img = `${app.globalData.baseUrl}${img}`;
+        }
+
         return {
           ...item,
+          image: img,
           categoryId: String(item.categoryId || item.category_id), // 兼容字段名
           isVipUser: isVip,
           vipPrice: (item.price * 0.6).toFixed(1)
@@ -297,7 +307,17 @@ Page({
   // --- AI 助手 ---
   showAIModal() {
     this.setData({ showAI: true });
+    this.scrollToBottom();
   },
+  
+  scrollToBottom() {
+    setTimeout(() => {
+      this.setData({
+        toViewMsg: 'ai-bottom-anchor'
+      });
+    }, 100);
+  },
+
   closeAI() {
     this.setData({ showAI: false });
   },
@@ -409,6 +429,15 @@ Page({
     wx.navigateBack();
   },
 
+  goToDetail(e) {
+    const item = e.currentTarget.dataset.item;
+    // 将商品数据存入全局，供详情页读取
+    app.globalData.currentProduct = item;
+    wx.navigateTo({
+      url: '/pages/product-detail/product-detail'
+    });
+  },
+
   // --- 规格与加购 ---
   showSpec(e) {
     const item = e.currentTarget.dataset.item;
@@ -434,10 +463,6 @@ Page({
         price: item.isVipUser ? item.vipPrice : item.price,
         specString: '',
         selectedFlavors: {}
-      });
-      wx.showToast({
-        title: '已加入购物车',
-        icon: 'none'
       });
       return;
     }
@@ -478,10 +503,6 @@ Page({
     this.setData({
       showSpecModal: false
     });
-    wx.showToast({
-      title: '已加入购物车',
-      icon: 'none'
-    });
   },
 
   addToCart(product) {
@@ -502,15 +523,34 @@ Page({
       amount: product.price,
       dishFlavor: product.specString || ''
     };
+    wx.showLoading({ title: '添加中...' });
     wx.request({
       url: `${app.globalData.baseUrl}/shoppingCart/add`,
       method: 'POST',
       data: cartItem,
       success(res) {
+        wx.hideLoading();
         // 兼容 R 对象的 code=1
         if (res.statusCode === 200) {
+          wx.showToast({
+            title: '已加入购物车',
+            icon: 'none'
+          });
           that.fetchCartList();
+        } else {
+           wx.showToast({
+             title: '添加失败: ' + res.statusCode,
+             icon: 'none'
+           });
         }
+      },
+      fail(err) {
+        wx.hideLoading();
+        wx.showToast({
+          title: '网络错误',
+          icon: 'none'
+        });
+        console.error('Add to cart failed', err);
       }
     });
   },
@@ -570,13 +610,21 @@ Page({
     if (!item) return;
     const user = app.globalData.user;
     const that = this;
+    
+    // 优先使用 cartId (购物车记录ID)，如果没有则使用 userId + productId
+    // 注意：item.cartId 是在 fetchCartList 中映射的 cart.id
+    const payload = {
+      userId: user.id,
+      productId: item.id
+    };
+    if (item.cartId) {
+      payload.id = item.cartId;
+    }
+
     wx.request({
       url: `${app.globalData.baseUrl}/shoppingCart/sub`,
       method: 'POST',
-      data: {
-        userId: user.id,
-        productId: item.id
-      },
+      data: payload,
       success() {
         that.fetchCartList();
       }

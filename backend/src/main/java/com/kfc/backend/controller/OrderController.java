@@ -3,9 +3,11 @@ package com.kfc.backend.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.kfc.backend.entity.OrderDetail;
 import com.kfc.backend.entity.Orders;
-import com.kfc.backend.entity.User; // 导入 User 实体
+import com.kfc.backend.entity.ShoppingCart;
+import com.kfc.backend.entity.User;
 import com.kfc.backend.mapper.OrderDetailMapper;
 import com.kfc.backend.mapper.OrdersMapper;
+import com.kfc.backend.mapper.ShoppingCartMapper;
 import com.kfc.backend.mapper.UserMapper; // 导入 UserMapper
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,11 +35,23 @@ public class OrderController {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private ShoppingCartMapper shoppingCartMapper;
+
     // =========== 🧑 C端 顾客接口 ===========
 
     @Operation(summary = "创建订单")
     @PostMapping("/create")
     public String create(@RequestBody Orders orders) {
+        // 0. 检查购物车是否为空
+        QueryWrapper<ShoppingCart> cartWrapper = new QueryWrapper<>();
+        cartWrapper.eq("user_id", orders.getUserId());
+        List<ShoppingCart> cartItems = shoppingCartMapper.selectList(cartWrapper);
+
+        if (cartItems == null || cartItems.isEmpty()) {
+            throw new RuntimeException("购物车为空，不能下单");
+        }
+
         // 1. 设置基础信息
         orders.setOrderTime(LocalDateTime.now());
         orders.setStatus(1); // 1:待付款
@@ -79,6 +93,23 @@ public class OrderController {
 
         // 3. 保存订单到数据库
         ordersMapper.insert(orders);
+
+        // 4. 将购物车数据复制到订单明细表中
+        for (ShoppingCart cart : cartItems) {
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrderId(orders.getId());
+            orderDetail.setNumber(cart.getNumber());
+            orderDetail.setDishFlavor(cart.getDishFlavor());
+            orderDetail.setProductId(cart.getProductId());
+            orderDetail.setName(cart.getName());
+            orderDetail.setImage(cart.getImage());
+            orderDetail.setAmount(cart.getAmount());
+            orderDetailMapper.insert(orderDetail);
+        }
+
+        // 5. 清空购物车
+        shoppingCartMapper.delete(cartWrapper);
+
         return "下单成功，订单号：" + orders.getId();
     }
 

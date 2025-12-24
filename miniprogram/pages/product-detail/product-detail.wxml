@@ -1,0 +1,44 @@
+<view class="container">
+  <image class="product-img" src="{{product.image}}" mode="aspectFill"></image>
+  
+  <view class="info-card">
+    <view class="title-row">
+      <text class="name">{{product.name}}</text>
+    </view>
+    <text class="desc">{{product.description || '暂无描述'}}</text>
+    
+    <view class="price-row">
+      <view class="price-wrap">
+         <text class="currency">¥</text>
+         <text class="price">{{product.isVipUser ? product.vipPrice : product.price}}</text>
+         <text wx:if="{{product.isVipUser}}" class="vip-tag">大神卡</text>
+      </view>
+      <text wx:if="{{product.isVipUser}}" class="old-price">¥{{product.price}}</text>
+    </view>
+  </view>
+
+  <view class="spec-section" wx:if="{{product.parsedFlavors && product.parsedFlavors.length > 0}}">
+    <block wx:for="{{product.parsedFlavors}}" wx:key="name" wx:for-index="fIndex">
+      <view class="flavor-group">
+        <text class="flavor-title">{{item.name}}</text>
+        <view class="flavor-opts">
+          <block wx:for="{{item.options}}" wx:key="*this" wx:for-item="opt">
+            <view class="opt {{item.selected === opt ? 'active' : ''}}" 
+                  bindtap="selectFlavor" 
+                  data-findex="{{fIndex}}" 
+                  data-opt="{{opt}}">
+              {{opt}}
+            </view>
+          </block>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="total-price">
+      <text>¥</text>{{product.isVipUser ? product.vipPrice : product.price}}
+    </view>
+    <button class="add-btn" bindtap="addToCart">加入购物车</button>
+  </view>
+</view>

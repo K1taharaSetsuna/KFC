@@ -1,12 +1,17 @@
 package com.kfc.backend.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import java.math.BigDecimal;
 
 @TableName("order_detail")
 public class OrderDetail {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     private String name;
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long orderId;
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long productId;
     private Integer number;
     private BigDecimal amount;

@@ -55,8 +55,15 @@ Page({
 
           // ⚠️注意：把管理员信息单独存，不要覆盖普通用户的 userInfo
           wx.setStorageSync('adminInfo', adminData);
-          // 如果后端有 token，也存一下
-          // wx.setStorageSync('adminToken', adminData.token);
+          
+          // ✨✨✨ 核心修复：取出后端返回的 Token 并存入本地 ✨✨✨
+          // 之前的代码注释掉了这行，导致没有存 Token
+          if (adminData.token) {
+             wx.setStorageSync('admin_token', adminData.token);
+             console.log('🔑 管理员Token已存储:', adminData.token);
+          } else {
+             console.error('❌ 后端未返回Token，后续请求可能会报401');
+          }
           
           wx.showToast({ title: '登录成功', icon: 'success' });
           
