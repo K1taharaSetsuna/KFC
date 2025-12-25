@@ -189,4 +189,67 @@ public class ProductController {
         }
         return R.success("修复完成，共修复 " + count + " 个商品图片");
     }
+
+    /**
+     * 临时修复接口：为套餐和饮品添加默认口味
+     */
+    @GetMapping("/fixFlavors")
+    public R<String> fixFlavors() {
+        int count = 0;
+        
+        // 1. 处理套餐 (Category = 2)
+        QueryWrapper<Product> queryCombos = new QueryWrapper<>();
+        queryCombos.eq("category_id", 2);
+        List<Product> combos = productMapper.selectList(queryCombos);
+        
+        if (combos != null) {
+            for (Product p : combos) {
+                // 先删除旧口味
+                QueryWrapper<ProductFlavor> delWrapper = new QueryWrapper<>();
+                delWrapper.eq("product_id", p.getId());
+                productFlavorMapper.delete(delWrapper);
+                
+                // 添加新口味 - 饮料
+                ProductFlavor f1 = new ProductFlavor();
+                f1.setProductId(p.getId());
+                f1.setName("饮料选择");
+                f1.setValue("[\"百事可乐\", \"七喜\", \"柠檬红茶\", \"九珍果汁\"]");
+                productFlavorMapper.insert(f1);
+                
+                // 添加新口味 - 配餐
+                ProductFlavor f2 = new ProductFlavor();
+                f2.setProductId(p.getId());
+                f2.setName("配餐选择");
+                f2.setValue("[\"薯条(中)\", \"土豆泥\", \"上校鸡块(5块)\"]");
+                productFlavorMapper.insert(f2);
+                
+                count++;
+            }
+        }
+        
+        // 2. 处理饮品 (Category = 5)
+        QueryWrapper<Product> queryDrinks = new QueryWrapper<>();
+        queryDrinks.eq("category_id", 5);
+        List<Product> drinks = productMapper.selectList(queryDrinks);
+        
+        if (drinks != null) {
+            for (Product p : drinks) {
+                // 先删除旧口味
+                QueryWrapper<ProductFlavor> delWrapper = new QueryWrapper<>();
+                delWrapper.eq("product_id", p.getId());
+                productFlavorMapper.delete(delWrapper);
+                
+                // 添加新口味 - 温度
+                ProductFlavor f1 = new ProductFlavor();
+                f1.setProductId(p.getId());
+                f1.setName("温度");
+                f1.setValue("[\"正常冰\", \"少冰\", \"去冰\", \"常温\", \"热\"]");
+                productFlavorMapper.insert(f1);
+                
+                count++;
+            }
+        }
+        
+        return R.success("口味修复完成，共处理 " + count + " 个商品");
+    }
 }

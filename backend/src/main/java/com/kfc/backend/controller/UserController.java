@@ -60,7 +60,8 @@ public class UserController {
             // 3. 保存到 Session
             session.setAttribute(phone, code);
 
-            return R.success("验证码发送成功");
+            // 开发环境便利性：将验证码直接返回给前端 (生产环境请移除)
+            return R.success("验证码发送成功").add("validateCode", code);
         }
         return R.error("短信发送失败");
     }

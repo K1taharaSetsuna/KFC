@@ -292,37 +292,10 @@ Page({
     });
   },
 
-  onSearchInput(e) {
-    const keyword = e.detail.value;
-    if (this.searchTimer) clearTimeout(this.searchTimer);
-    if (!keyword) {
-      this.setData({
-        products: [],
-        currentCategoryName: this.data.categories.length > 0 ? this.data.categories[0].name : ''
-      });
-      return;
-    }
-    const that = this;
-    this.searchTimer = setTimeout(() => {
-      wx.request({
-        url: `${app.globalData.baseUrl}/product/list?name=${keyword}`,
-        success(res) {
-          // ✨ 拆包逻辑
-          let searchResults = [];
-          if (res.data && res.data.code === 1) {
-            searchResults = res.data.data || [];
-          } else {
-            searchResults = res.data || [];
-          }
-
-          that.setData({
-            products: searchResults,
-            currentCategoryName: `搜索结果 ("${keyword}")`,
-            activeCategory: null
-          });
-        }
-      });
-    }, 500);
+  goToSearch() {
+    wx.navigateTo({
+      url: '/pages/search/search'
+    });
   },
 
   toggleThinking(e) {

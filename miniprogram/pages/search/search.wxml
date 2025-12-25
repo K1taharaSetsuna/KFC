@@ -1,0 +1,47 @@
+<view class="container">
+  <!-- 搜索头 -->
+  <view class="search-header">
+    <view class="input-box">
+      <icon type="search" size="14"></icon>
+      <input class="input" placeholder="请输入菜品名称" confirm-type="search" bindinput="onInput" bindconfirm="onSearch" value="{{keyword}}" auto-focus />
+      <view class="clear-btn" wx:if="{{keyword}}" bindtap="clearKeyword">
+        <icon type="clear" size="14"></icon>
+      </view>
+    </view>
+    <view class="cancel-btn" bindtap="onCancel">取消</view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view class="result-section" wx:if="{{hasSearched}}">
+    <view wx:if="{{resultList.length === 0}}" class="empty-tip">未找到相关菜品</view>
+    <scroll-view scroll-y class="result-list" wx:else>
+      <block wx:for="{{resultList}}" wx:key="id">
+        <view class="product-item" bindtap="goToDetail" data-item="{{item}}">
+          <image class="p-img" src="{{item.image}}" mode="aspectFill"></image>
+          <view class="p-info">
+            <view class="p-header">
+                <view class="p-name">{{item.name}}</view>
+                <view class="p-price">¥{{item.price}}</view>
+            </view>
+            <view class="p-desc">{{item.description || '暂无描述'}}</view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <!-- 搜索历史 -->
+  <view class="history-section" wx:else>
+    <view class="section-header">
+      <text class="title">搜索历史</text>
+      <view bindtap="clearHistory" wx:if="{{historyList.length > 0}}">
+         <text style="font-size:24rpx; color:#999;">清空</text>
+      </view>
+    </view>
+    <view class="history-tags">
+      <block wx:for="{{historyList}}" wx:key="*this">
+        <view class="tag" bindtap="onHistoryTap" data-keyword="{{item}}">{{item}}</view>
+      </block>
+    </view>
+  </view>
+</view>

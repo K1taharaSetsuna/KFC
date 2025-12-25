@@ -14,6 +14,7 @@
     "pages/login-password/login-password",
     "pages/product-edit/product-edit",
     "pages/product-detail/product-detail",
+    "pages/search/search",
     "pages/order-confirm/order-confirm",
     "pages/register/register" 
   ],

@@ -4,9 +4,9 @@
       <view class="back-btn" bindtap="goBack">
         <text class="arrow-left">‹</text>
       </view>
-      <view class="search-bar">
+      <view class="search-bar" bindtap="goToSearch">
         <text class="search-icon">🔍</text>
-        <input class="search-input" placeholder="搜一搜你想吃的" placeholder-style="color:#999;" bindinput="onSearchInput" />
+        <input class="search-input" placeholder="搜一搜你想吃的" placeholder-style="color:#999;" disabled="true" />
       </view>
       <view class="together-btn">
         <text>拼</text> 一起点
@@ -126,7 +126,15 @@
                <text class="price-real">¥<text class="price-big">{{dish.price}}</text></text>
             </block>
           </view>
-          <button class="spec-btn" bindtap="showSpec" data-item="{{dish}}">选规格</button>
+          
+          <!-- ✨ 智能按钮逻辑：有口味选规格，没口味直接加 -->
+          <block wx:if="{{dish.flavors && dish.flavors.length > 0}}">
+            <button class="spec-btn" catchtap="showSpec" data-item="{{dish}}">选规格</button>
+          </block>
+          <block wx:else>
+            <view class="add-btn" catchtap="showSpec" data-item="{{dish}}">+</view>
+          </block>
+
         </view>
       </view>
     </view>
@@ -165,6 +173,7 @@
     <scroll-view scroll-y class="cart-list">
       <block wx:for="{{cartList}}" wx:key="index">
         <view class="cart-item">
+          <image class="cart-item-img" src="{{item.image}}" mode="aspectFill"></image>
           <view class="cart-item-info">
             <text class="cart-item-name">{{item.name}}</text>
             <text wx:if="{{item.specString}}" class="cart-item-spec">{{item.specString}}</text>
@@ -239,13 +248,18 @@
             <!-- ✨ 推荐菜品卡片 -->
             <view class="ai-recommends" wx:if="{{item.recommendations && item.recommendations.length > 0}}">
                 <block wx:for="{{item.recommendations}}" wx:key="id" wx:for-item="recProd">
-                    <view class="rec-card" catchtap="showSpec" data-item="{{recProd}}">
-                        <image class="rec-img" src="{{recProd.image}}" mode="aspectFill"></image>
+                    <view class="rec-card">
+                        <image class="rec-img" src="{{recProd.image}}" mode="aspectFill" catchtap="goToDetail" data-item="{{recProd}}"></image>
                         <view class="rec-info">
                             <text class="rec-name">{{recProd.name}}</text>
                             <view class="rec-bottom">
                                 <text class="rec-price">¥{{recProd.price}}</text>
-                                <view class="rec-add-btn">选购</view>
+                                <block wx:if="{{recProd.flavors && recProd.flavors.length > 0}}">
+                                    <button class="spec-btn" catchtap="showSpec" data-item="{{recProd}}">选规格</button>
+                                </block>
+                                <block wx:else>
+                                    <view class="add-btn" catchtap="showSpec" data-item="{{recProd}}">+</view>
+                                </block>
                             </view>
                         </view>
                     </view>

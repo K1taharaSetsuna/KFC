@@ -50,7 +50,23 @@ Page({
       },
       success(res) {
         if (res.data.code === 1) {
-            wx.showToast({ title: '验证码已发送', icon: 'none' });
+            // === 开发便利性优化：如果后端返回了验证码，直接弹窗提示 ===
+            if (res.data.map && res.data.map.validateCode) {
+                wx.showModal({
+                    title: '验证码 (测试模式)',
+                    content: '当前验证码为：' + res.data.map.validateCode,
+                    showCancel: false,
+                    confirmText: '一键填入',
+                    success: (mRes) => {
+                        if (mRes.confirm) {
+                            that.setData({ code: res.data.map.validateCode });
+                            that.checkLoginStatus();
+                        }
+                    }
+                });
+            } else {
+                wx.showToast({ title: '验证码已发送', icon: 'none' });
+            }
             
             // === 关键修复：保存 Session Cookie ===
             // 微信小程序不会自动管理 Cookie，必须手动保存
